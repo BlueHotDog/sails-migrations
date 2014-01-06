@@ -3,7 +3,7 @@ _ = require('lodash')
 path = require('path')
 glob = require('glob')
 moment = require('moment')
-
+_s = require('underscore.string')
 
 class Migration
   @allMigrationsFiles: (paths = @migrationsPaths(), cb)->
@@ -25,8 +25,9 @@ class Migration
     }
 
   @generateMigration: (name)->
+    migrationName = _s.underscored(name)
     migrationNumber = @nextMigrationNumber()
-    "#{migrationNumber}_#{name}"
+    "#{migrationNumber}_#{migrationName}"
 
   @nextMigrationNumber: -> moment().format('YYYYMMDDHHmmss')
 

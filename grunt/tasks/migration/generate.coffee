@@ -12,8 +12,7 @@ module.exports = (grunt) ->
     gakeDir = grunt.config.get('gake').tasksDir
     generateTemplate = "#{grunt.config.get('basePath')}/#{gakeDir}/migration/templates"
 
-    migrationName = _s.underscored(grunt.option('name'))
-    migrationFullname = migration.generateMigration(migrationName)
+    migrationFullname = migration.generateMigration(grunt.option('name'))
     migrationPath = "./migrations/#{migrationFullname}.js"
 
     templates = dot.process(path: generateTemplate)
