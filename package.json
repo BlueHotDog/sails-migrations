@@ -1,0 +1,40 @@
+{
+  "name": "sails-migrations",
+  "version": "0.0.1",
+  "description": "The missing, migrations, arm of the octopus",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BlueHotDog/sails-migrations.git"
+  },
+  "keywords": [
+    "sails",
+    "sailsjs",
+    "migrations",
+    "waterline"
+  ],
+  "author": [
+    "BlueHotDog"
+  ],
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/BlueHotDog/sails-migrations/issues"
+  },
+  "homepage": "https://github.com/BlueHotDog/sails-migrations",
+  "dependencies": {
+    "waterline": "~0.9",
+    "coffee-script": "~1.6",
+    "grunt": "~0.4",
+    "gake": "~0.1",
+    "lodash": "~2.4",
+    "bluebird": "~0.11",
+    "glob": "~3.2",
+    "dot": "~1.0.2",
+    "moment": "~2.5",
+    "underscore.string": "~2.3"
+  }
+}
