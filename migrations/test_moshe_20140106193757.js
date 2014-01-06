@@ -1,6 +1,6 @@
 /*
-* Sails migration -
-* Created by {{=it.username}} at {{=it.creationDate}}
+* Sails migration
+* Created by moshe at 20140106193757
 * */
 
 exports.up = function(done) {

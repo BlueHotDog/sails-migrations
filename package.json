@@ -35,6 +35,6 @@
     "glob": "~3.2",
     "dot": "~1.0.2",
     "moment": "~2.5",
-    "underscore.string": "~2.3"
+    "underscore.string": "~2.3.3"
   }
 }
