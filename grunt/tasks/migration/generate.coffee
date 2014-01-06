@@ -4,19 +4,20 @@
 ###
 dot = require('dot')
 fs = require('fs')
+moment = require('moment')
 
 module.exports = (grunt) ->
   migration = require("#{grunt.config.get('basePath')}/lib/sails-migrations/migration")
   grunt.registerTask("migration:generate", "generate a migration file", ()->
-    gakeDir = grunt.config.get('gake').tasksDir
-    generateTemplate = "#{grunt.config.get('basePath')}/#{gakeDir}/migration/templates"
-
-    migrationFullname = migration.generateMigration(grunt.option('name'))
+    grunt.task.run(['migration:loadConfig'])
+    @requires("migration:loadConfig")
+    @requiresConfig("migration.config")
+    templatesPath = grunt.config.get("migration.config.templatesPath")
+    migrationFullname = migration.generateMigrationName(grunt.option('name'))
     migrationPath = "./migrations/#{migrationFullname}.js"
 
-    templates = dot.process(path: generateTemplate)
-    migrationContent = templates.migration(username: "moshe", creationDate: "")
-    console.log(migrationContent)
+    templates = dot.process(path: templatesPath)
+    migrationContent = templates.migration(username: "moshe", creationDate:  moment().format())
 
     fs.writeFileSync(migrationPath, migrationContent)
   )

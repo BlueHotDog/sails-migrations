@@ -6,5 +6,4 @@
  * will create the following key: grunt.config('some.name') and each exported key will be under that namespace
  * */
 module.exports = {
-  t:3
 };
