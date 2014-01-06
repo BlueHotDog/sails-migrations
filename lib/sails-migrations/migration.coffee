@@ -24,7 +24,7 @@ class Migration
       name: result[2]
     }
 
-  @generateMigration: (name)->
+  @generateMigrationName: (name)->
     migrationName = _s.underscored(name)
     migrationNumber = @nextMigrationNumber()
     "#{migrationNumber}_#{migrationName}"
