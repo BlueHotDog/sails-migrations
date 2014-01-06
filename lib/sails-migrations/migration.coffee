@@ -24,6 +24,10 @@ class Migration
       name: result[2]
     }
 
+  @generateMigration: (name)->
+    migrationNumber = @nextMigrationNumber()
+    "#{migrationNumber}_#{name}"
+
   @nextMigrationNumber: -> moment().format('YYYYMMDDHHmmss')
 
   @migrations: (paths, cb)->

@@ -13,14 +13,12 @@ module.exports = (grunt) ->
     generateTemplate = "#{grunt.config.get('basePath')}/#{gakeDir}/migration/templates"
 
     migrationName = _s.underscored(grunt.option('name'))
-    migrationNumber = migration.nextMigrationNumber()
-    migrationFullname = "#{migrationName}_#{migrationNumber}.js"
-    migrationPath = "./migrations/#{migrationFullname}"
+    migrationFullname = migration.generateMigration(migrationName)
+    migrationPath = "./migrations/#{migrationFullname}.js"
 
     templates = dot.process(path: generateTemplate)
-    migrationContent = templates.migration(username: "moshe", creationDate: migrationNumber)
+    migrationContent = templates.migration(username: "moshe", creationDate: "")
     console.log(migrationContent)
 
     fs.writeFileSync(migrationPath, migrationContent)
-    console.log('hi')
   )
