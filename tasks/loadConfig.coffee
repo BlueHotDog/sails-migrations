@@ -3,6 +3,8 @@
   Please visit http://gruntjs.com/ to learn more about how to work with grunt tasks
 ###
 path = require('path')
+_ = require('lodash')
+SailsIntegration = require('../lib/sails-migrations/sails_integration')
 
 module.exports = (grunt) ->
   grunt.registerTask("migration:loadConfig", "internal task to load all needed configuration", ()->
@@ -17,26 +19,16 @@ module.exports = (grunt) ->
       basePath = grunt.config.get('basePath')
 
     done = @async()
+    config = SailsIntegration.loadSailsConfig(sails, (err)->
+      return done(err) if err
 
-    options =
-      globals: false
-      loadHooks: ['moduleloader', 'userconfig', 'orm']
-
-    sails.load(options, (err)->
-      console.log('error when loading sails') if err
-      gakeDir = grunt.config.get('gake').tasksDir
-      defaultAdapterName =  sails.config.adapters.default
-      dbConfig = sails.config.adapters[defaultAdapterName]
-      adapter = require(path.join(basePath, "test/test_app/node_modules", dbConfig.module))
-      adapter.config = dbConfig
-
-      grunt.config.set('migration.config', {
+      config = _.extend(config, {
         migrationOutDir: path.join(basePath,"db","migrations")
         templatesPath: path.join(basePath,"#{gakeDir}/migration/templates")
-        migrationLibPath: path.join(basePath,"lib/sails-migrations")
-        defaultAdapterName: defaultAdapterName
-        defaultAdapter: adapter
       })
+
+      grunt.config.set('migration.config', config)
+
       done()
     )
   )
