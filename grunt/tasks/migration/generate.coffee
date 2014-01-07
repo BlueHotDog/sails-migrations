@@ -3,7 +3,6 @@
   Please visit http://gruntjs.com/ to learn more about how to work with grunt tasks
 ###
 dot = require('dot')
-_s = require('underscore.string')
 fs = require('fs')
 
 module.exports = (grunt) ->
