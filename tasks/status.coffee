@@ -11,11 +11,12 @@ module.exports = (grunt, done) ->
     #@requiresConfig('migration.config')
 
     config = grunt.config.get('migration.config')
-    SchemaMigration = require("#{grunt.config.get('migration.config.migrationLibPath')}/schema_migration")(adapter)
+    SchemaMigration = require("#{grunt.config.get('migration.config.migrationLibPath')}/schema_migration")(config.defaultAdapterName)
 
     options = {adapters:{}}
-    options.adapters[config.defaultAdapterName] = config.defaultAdapterName
+    options.adapters[config.defaultAdapterName] = config.defaultAdapter
 
+    console.log options
     new SchemaMigration(options, (err, Model)->
       result = Model.create(version: 1).done( (err, result)->
         console.log err, result
