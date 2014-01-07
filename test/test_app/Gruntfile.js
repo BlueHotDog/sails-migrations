@@ -394,6 +394,11 @@ module.exports = function (grunt) {
        * Jade linker end
        ************************************/
     },
+    basePath: __dirname,
+    gake: {
+      configDir: './grunt/config',
+      tasksDir: './grunt/tasks'
+    },
 
     watch: {
       api: {
@@ -481,4 +486,6 @@ module.exports = function (grunt) {
   //     console.error(filepath + ' has ' + action + ', but could not signal the Sails.js server: ' + e.message);
   //   });
   // });
+  grunt.loadNpmTasks('gake');
+  grunt.loadNpmTasks('sails-migrations');
 };
