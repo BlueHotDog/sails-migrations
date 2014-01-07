@@ -16,11 +16,13 @@ module.exports = (grunt, done) ->
     options = {adapters:{}}
     options.adapters[config.defaultAdapterName] = config.defaultAdapter
 
-    console.log options
     new SchemaMigration(options, (err, Model)->
-      result = Model.create(version: 1).done( (err, result)->
-        console.log err, result
-        done()
+      console.log Model.define(Model.attributes, ->
+        console.log('hi')
+        result = Model.create(version: 1).done( (err, result)->
+          console.log err, result
+          done()
+        )
       )
     )
   )
