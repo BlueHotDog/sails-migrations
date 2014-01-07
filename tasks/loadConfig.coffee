@@ -18,21 +18,25 @@ module.exports = (grunt) ->
 
     done = @async()
 
-    options = 
+    options =
       globals: false
       loadHooks: ['moduleloader', 'userconfig', 'orm']
 
     sails.load(options, (err)->
       console.log('error when loading sails') if err
+      console.dir(sails)
       gakeDir = grunt.config.get('gake').tasksDir
-      def =  sails.config.adapters.default
-      dbConfig = sails.config.adapters[def]
+      defaultAdapterName =  sails.config.adapters.default
+      dbConfig = sails.config.adapters[defaultAdapterName]
       adapter = require(path.join(basePath, "test/test_app/node_modules", dbConfig.module))
+      adapter.config = dbConfig
+
       grunt.config.set('migration.config', {
         migrationOutDir: path.join(basePath,"db","migrations")
         templatesPath: path.join(basePath,"#{gakeDir}/migration/templates")
         migrationLibPath: path.join(basePath,"lib/sails-migrations")
-        adapter: adapter
+        defaultAdapterName: defaultAdapterName
+        defaultAdapter: adapter
       })
       done()
     )
