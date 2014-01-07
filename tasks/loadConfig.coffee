@@ -24,7 +24,6 @@ module.exports = (grunt) ->
 
     sails.load(options, (err)->
       console.log('error when loading sails') if err
-      console.dir(sails)
       gakeDir = grunt.config.get('gake').tasksDir
       defaultAdapterName =  sails.config.adapters.default
       dbConfig = sails.config.adapters[defaultAdapterName]
