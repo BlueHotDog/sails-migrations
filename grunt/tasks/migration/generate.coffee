@@ -18,6 +18,7 @@ module.exports = (grunt) ->
     migrationOutDir = grunt.config.get("migration.config.migrationOutDir")
     migrationPath = path.join(migrationOutDir,"#{migrationFullname}.js")
 
+    console.log(templatesPath)
     templates = dot.process(path: templatesPath)
     migrationContent = templates.migration(username: "moshe", creationDate:  moment().format())
 
