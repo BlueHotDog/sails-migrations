@@ -8,10 +8,10 @@ path = require('path')
 moment = require('moment')
 
 module.exports = (grunt) ->
-  migration = require("#{grunt.config.get('basePath')}/lib/sails-migrations/migration")
   grunt.registerTask("migration:generateTask", "generate a migration file", ()->
     @requires("migration:loadConfig")
     @requiresConfig("migration.config")
+    migration = require("#{grunt.config.get('basePath')}/lib/sails-migrations/migration")
     templatesPath = grunt.config.get("migration.config.templatesPath")
     migrationFullname = migration.generateMigrationName(grunt.option('name'))
     migrationOutDir = grunt.config.get("migration.config.migrationOutDir")
