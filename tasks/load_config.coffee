@@ -12,12 +12,14 @@ module.exports = (grunt) ->
     #version of sails-migration, and since it will run under the real path of sails-migrations when trying to require 'sails',
     #we have to manually give the path for the test_app sails module
     if process.env.NODE_ENV == 'test'
-      sails = require('../test/test_app/node_modules/sails')
-      basePath = path.join(grunt.config.get('basePath'), "../../")
-      adapterLoadPath = path.join(grunt.config.get('basePath'), "../../test/test_app/node_modules")
+      baseAppPath = grunt.config.get('basePath')
+      baseModulePath = path.join(baseAppPath, "../../")
+      sails = require(path.join(baseAppPath, "node_modules/sails"))
+      adapterLoadPath = path.join(baseAppPath, "node_modules")
     else
       sails = require('sails')
       basePath = grunt.config.get('basePath')
+      baseModulePath = basePath
       adapterLoadPath = ""
 
     done = @async()
@@ -25,8 +27,8 @@ module.exports = (grunt) ->
       return done(err) if err
 
       config = _.extend(config, {
-        migrationOutDir: path.join(basePath,"db","migrations")
-        templatesPath: path.join(basePath,"/tasks/templates")
+        migrationOutDir: path.join(baseAppPath,"db","migrations")
+        templatesPath: path.join(baseModulePath,"/tasks/templates")
       })
 
       grunt.config.set('migration.config', config)

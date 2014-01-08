@@ -12,10 +12,14 @@ module.exports = (grunt) ->
   grunt.registerTask("migration:generateTask", "generate a migration file", ()->
     @requires("migration:loadConfig")
     @requiresConfig("migration.config")
-    migration = require("#{grunt.config.get('basePath')}/lib/sails-migrations/migration")
-    templatesPath = grunt.config.get("migration.config.templatesPath")
+    grunt.fail.fatal("The --name parameter is required") unless grunt.option('name')
+
+    config = grunt.config.get('migration.config')
+
+    migration = require(path.join(config.migrationLibPath, "migration"))
+    templatesPath = config.templatesPath
     migrationFullname = migration.generateMigrationName(grunt.option('name'))
-    migrationOutDir = grunt.config.get("migration.config.migrationOutDir")
+    migrationOutDir = config.migrationOutDir
     migrationPath = path.join(migrationOutDir,"#{migrationFullname}.js")
 
     templates = dot.process(path: templatesPath)

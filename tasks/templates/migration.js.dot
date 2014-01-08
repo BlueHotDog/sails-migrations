@@ -3,10 +3,10 @@
 * Created by {{=it.username}} at {{=it.creationDate}}
 * */
 
-exports.up = function(done) {
+exports.up = function(adapter, done) {
   done();
 };
 
-exports.down = function(done) {
+exports.down = function(adapter, done) {
   done();
 };
