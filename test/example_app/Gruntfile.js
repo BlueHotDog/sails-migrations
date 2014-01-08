@@ -15,7 +15,6 @@
  */
 
 module.exports = function (grunt) {
-  require('runonymous-grunt')(grunt); //allows us to make task dependencies a bit nicer
 
   /**
    * CSS files to inject in order

@@ -1,7 +1,7 @@
 LOCAL_HOSTS = ['127.0.0.1', 'localhost']
 class DatabaseTasks
-  create: ->
-    #TODO: there seems to be currently no way to create the database from within waterline, need to add it there first.
+  create: (adapter)->
+    console.log(adapter)
 
   migrations_paths: ->
     #TODO: sails should have something similar to rails Rails.application.paths['db/migrate'].to_a
@@ -9,4 +9,7 @@ class DatabaseTasks
 
   drop: ->
     #TODO: waterline needs to add support for dropping a database
-  end
+
+
+
+module.exports = DatabaseTasks

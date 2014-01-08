@@ -11,8 +11,7 @@
     "optimist": "0.3.4",
     "sails-migrations": "",
     "gake": "~0.1.2",
-    "sails-mysql": "~0.9.7",
-    "runonymous-grunt": "0.0.1"
+    "sails-mysql": "~0.9.7"
   },
   "scripts": {
     "start": "node app.js",

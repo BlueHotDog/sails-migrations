@@ -6,10 +6,6 @@ class MigrationRunner
 
   up: (adapter, cb)->
     migration = @requireMigration()
-    console.log migration
-    console.log "#{@migrationData.path} before migration up"
-    console.log adapter
-
     options = {adapters:{}}
     options.adapters["adapterName"] = adapter
 

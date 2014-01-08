@@ -35,8 +35,7 @@
     "glob": "~3.2",
     "dot": "~1.0.2",
     "moment": "~2.5",
-    "underscore.string": "~2.3.3",
-    "runonymous-grunt": "0.0.1"
+    "underscore.string": "~2.3.3"
   },
   "devDependencies": {
     "mocha": "~1.16.2",
