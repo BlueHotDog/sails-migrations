@@ -14,15 +14,15 @@ class Migration
 
   @latestMigration: (migrations)->
     migrations ||= [];
-    _(migrations).map(@parseMigrationFileName).max('version')
+    _(migrations).map(@parseMigrationFileName).max('version').value()
 
   @parseMigrationFileName: (file)->
-    return {} if _.isEmpty(file)
     regex = /([0-9]+)_([_a-z0-9]*)\.(coffee|js)/
     result = file.match(regex)
     {
       version: _.parseInt(result[1], 10)
       name: result[2]
+      path: file
     }
 
   @generateMigrationName: (name)->

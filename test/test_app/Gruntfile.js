@@ -16,8 +16,6 @@
 
 module.exports = function (grunt) {
 
-
-
   /**
    * CSS files to inject in order
    * (uses Grunt-style wildcard/glob/splat expressions)
