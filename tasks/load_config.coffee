@@ -8,12 +8,12 @@ SailsIntegration = require('../lib/sails-migrations/sails_integration')
 
 module.exports = (grunt) ->
   grunt.registerTask("migration:loadConfig", "internal task to load all needed configuration", ()->
-    #We're doing this only under test because the test_app configures the sails-migration package to be linked to the local
+    #We're doing this only under test because the example_app configures the sails-migration package to be linked to the local
     #version of sails-migration, and since it will run under the real path of sails-migrations when trying to require 'sails',
-    #we have to manually give the path for the test_app sails module
+    #we have to manually give the path for the example_app sails module
     if process.env.NODE_ENV == 'test'
       baseAppPath = grunt.config.get('basePath')
-      baseModulePath = path.join(baseAppPath, "../../")
+      baseModulePath = path.join(baseAppPath, "../")
       sails = require(path.join(baseAppPath, "node_modules/sails"))
       adapterLoadPath = path.join(baseAppPath, "node_modules")
     else

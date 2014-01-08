@@ -1,0 +1,10 @@
+--require should
+--timeout 60000
+--require test/spec_helper
+--reporter spec
+--ui bdd
+--compilers coffee:coffee-script
+--watch
+--growl
+--recursive
+--check-leaks

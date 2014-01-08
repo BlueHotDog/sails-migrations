@@ -18,7 +18,6 @@ module.exports = (grunt, done) ->
 
     new SchemaMigration(options, (err, Model)->
       console.log Model.define(Model.attributes, ->
-        console.log('hi')
         result = Model.create(version: 1).done( (err, result)->
           console.log err, result
           done()

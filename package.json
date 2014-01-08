@@ -36,5 +36,9 @@
     "dot": "~1.0.2",
     "moment": "~2.5",
     "underscore.string": "~2.3.3"
+  },
+  "devDependencies": {
+    "mocha": "~1.16.2",
+    "should": "~2.1.1"
   }
 }
