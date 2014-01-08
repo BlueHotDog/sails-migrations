@@ -1,19 +1,32 @@
 migrationHelper = require('./migration')
+SchemaMigration = require('./schema_migration')
 
 class MigrationRunner
   constructor: (@migrationFilename)->
     @metadata = migrationHelper.parseMigrationFileName(@migrationFilename)
 
-  up: (cb)->
+  up: (adapter, cb)->
     migration = @requireMigration()
     console.log "#{@migrationFilename} before migration up"
-    migration.up( (err)->
+    console.log adapter
+
+    options = {adapters:{}}
+    options.adapters[adapter.name] = adapter
+
+    migration.up(adapter, (err)->
       return cb(err) if err
-      cb()
+      sm = new SchemaMigration(adapter.name)(options, (err, Model)->
+        Model.create({version: @metadata.version}, (err, model)->
+          return cb(err) if err
+          cb(null, model)
+        )
+      )
     )
 
-  down: (cb)->
+  down: (adapter, cb)->
     migration.down(cb)
 
   requireMigration: ->
     require(@migrationFilename)
+
+module.exports = MigrationRunner

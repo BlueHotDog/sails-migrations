@@ -1,7 +1,7 @@
 path = require('path')
 
 class SailsIntegration
-  @loadSailsConfig: (sails, cb)->
+  @loadSailsConfig: (sails, adapterLoadPath, cb)->
     options =
       globals: false
       loadHooks: ['moduleloader', 'userconfig', 'orm']
@@ -11,14 +11,14 @@ class SailsIntegration
 
       defaultAdapterName =  sails.config.adapters.default
       dbConfig = sails.config.adapters[defaultAdapterName]
-      adapter = require(path.join(basePath, "test/test_app/node_modules", dbConfig.module))
+      adapter = require(path.join(adapterLoadPath, dbConfig.module))
       adapter.config = dbConfig
 
       config =
         migrationLibPath: __dirname
         defaultAdapterName: defaultAdapterName
         defaultAdapter: adapter
-      cb(config)
+      cb(null, config)
     )
 
 module.exports = SailsIntegration

@@ -14,17 +14,19 @@ module.exports = (grunt) ->
     if process.env.NODE_ENV == 'test'
       sails = require('../test/test_app/node_modules/sails')
       basePath = path.join(grunt.config.get('basePath'), "../../")
+      adapterLoadPath = path.join(grunt.config.get('basePath'), "../../test/test_app/node_modules")
     else
       sails = require('sails')
       basePath = grunt.config.get('basePath')
+      adapterLoadPath = ""
 
     done = @async()
-    config = SailsIntegration.loadSailsConfig(sails, (err)->
+    SailsIntegration.loadSailsConfig(sails, adapterLoadPath, (err, config)->
       return done(err) if err
 
       config = _.extend(config, {
         migrationOutDir: path.join(basePath,"db","migrations")
-        templatesPath: path.join(basePath,"#{gakeDir}/migration/templates")
+        templatesPath: path.join(basePath,"/tasks/templates")
       })
 
       grunt.config.set('migration.config', config)
