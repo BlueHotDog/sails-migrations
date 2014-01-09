@@ -6,7 +6,10 @@ The missing, migrations, arm of the octopus
 
 - [ ] waterline should support database drop/create
 - [ ] sails should have a configuration object
-- [ ] Continue working on migrate task
+- [ ] Continue working on db:migrate task
+- [ ] Create a db:status task
+- [ ] Create a db:rollback task. just the default behavior, meaning rolling back 
+  one migration
 - [x] Create task db:create
 - [x] Create task db:drop
 - [ ] VERBOSE mode in tasks
