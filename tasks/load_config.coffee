@@ -13,16 +13,15 @@ module.exports = (grunt) ->
     #we have to manually give the path for the example_app sails module
     if process.env.NODE_ENV == 'test'
       baseAppPath = grunt.config.get('basePath')
-      sailsPath = path.join(baseAppPath, "node_modules/sails")
-      adapterLoadPath = path.join(baseAppPath, "node_modules")
+      modulesPath = path.join(baseAppPath, "node_modules")
     else
 #      sailsPath = require('sails')
       basePath = grunt.config.get('basePath')
-      adapterLoadPath = ""
+      modulesPath = process.cwd()
 
     done = @async()
 
-    SailsIntegration.loadSailsConfig(sailsPath, adapterLoadPath, (err, config)->
+    SailsIntegration.loadSailsConfig(modulesPath, (err, config)->
       return done(err) if err
 
       config = _.extend(config, {
