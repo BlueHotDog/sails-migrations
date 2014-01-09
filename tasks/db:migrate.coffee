@@ -5,7 +5,7 @@
 path = require('path')
 
 module.exports = (grunt, done) ->
-  grunt.registerTask('migration:migrateTask', 'migrate', ()->
+  grunt.registerTask('db:migrateTask', 'migrate', ()->
     done = @async()
     @requires('migration:loadConfig')
     config = grunt.config.get('migration.config')
@@ -21,5 +21,5 @@ module.exports = (grunt, done) ->
     )
   )
 
-  grunt.registerTask('migration:migrate', ['migration:loadConfig', 'migration:migrateTask'])
+  grunt.registerTask('db:migrate', ['migration:loadConfig', 'db:migrateTask'])
 
