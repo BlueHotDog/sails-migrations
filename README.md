@@ -12,4 +12,6 @@ The missing, migrations, arm of the octopus
   one migration
 - [x] Create task db:create
 - [x] Create task db:drop
+- [ ] load_config task - Make sure the modulesPath is correct for non test 
+  environments.
 - [ ] VERBOSE mode in tasks

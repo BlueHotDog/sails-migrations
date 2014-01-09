@@ -15,7 +15,6 @@ module.exports = (grunt) ->
       baseAppPath = grunt.config.get('basePath')
       modulesPath = path.join(baseAppPath, "node_modules")
     else
-#      sailsPath = require('sails')
       basePath = grunt.config.get('basePath')
       modulesPath = process.cwd()
 
