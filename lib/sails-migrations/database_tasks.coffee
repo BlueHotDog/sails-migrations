@@ -2,9 +2,10 @@ exec = require('child_process').exec
 LOCAL_HOSTS = ['127.0.0.1', 'localhost']
 class DatabaseTasks
   @create: (adapter, cb)->
+    console.log(adapter.config)
     switch adapter.identity
       when 'sails-mysql'
-        exec("mysql -u #{adapter.config.username} -p#{adapter.config.password} -e 'CREATE DATABASE IF NOT EXISTS #{adapter.config.database}'", (err, stdout, stdin)->
+        exec("mysql -h #{adapter.config.host} -u #{adapter.config.user} -p#{adapter.config.password} -e 'CREATE DATABASE IF NOT EXISTS #{adapter.config.database}'", (err, stdout, stdin)->
           console.log(arguments)
           return cb(err)
         )
