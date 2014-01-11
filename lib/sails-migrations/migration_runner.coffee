@@ -11,8 +11,8 @@ class MigrationRunner
 
     migration.up(adapter, (err)=>
       return cb(err) if err
-      sm = SchemaMigration("adapterName")
-      new sm(options, (err, Model)=>
+
+      SchemaMigration.getInstance(adapter, (err, Model)=>
         Model.create({version: @migrationData.version}, (err, model)->
           return cb(err) if err
           cb(null, model)

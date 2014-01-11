@@ -15,18 +15,25 @@ module.exports = (grunt) ->
     config = grunt.config.get('migration.config')
     done = @async()
 
-    databaseTasks = require(path.join(config.migrationLibPath, "database_tasks"))
+    databaseTasks = grunt.helpers.loadLibModule("database_tasks")
+    schemaMigrationModel = grunt.helpers.loadLibModule("schema_migration")
+
     grunt.log.writeln("Trying to create a new database")
+
     databaseTasks.create(config.defaultAdapter, (err)->
       return grunt.fail.fatal(err) if err
       grunt.log.oklns("Database created successfully")
-      done()
+
+      grunt.log.writeln("Creating version table")
+      schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
+        return grunt.fail.fatal(err) if err
+        grunt.log.oklns("table created successfully")
+        done()
+      )
     )
   )
 
   grunt.registerTask("db:create", "run database migrations", ['migration:loadConfig', 'db:createInternalTask'])
-
-
 
   grunt.registerTask("db:dropInternalTask", ->
     @requires("migration:loadConfig")
@@ -45,6 +52,7 @@ module.exports = (grunt) ->
   )
 
   grunt.registerTask("db:drop", "drops the database", ['migration:loadConfig', 'db:dropInternalTask'])
+
 
 
   grunt.registerTask("db:reset", "recreates the database", ['migration:loadConfig', 'db:dropInternalTask', 'db:createInternalTask'])
