@@ -6,11 +6,19 @@ moment = require('moment')
 _s = require('underscore.string')
 
 class Migration
-  @allMigrationsFiles: (paths = @migrationsPaths(), cb)->
-    paths = _.toArray(paths)
-    _(paths).map((path) ->
+  @allMigrationsFiles: (paths = @migrationsPaths(), cb) ->
+    paths = [paths] unless _.isArray(paths)
+    result = _(paths).map((path) ->
       glob.sync("#{path}/**/[0-9]*_*.{coffee,js}", {})
     ).flatten().value()
+
+    cb(null, result)
+
+  @allMigrationFilesParsed: (paths = @migrationsPaths(), cb) ->
+    @allMigrationsFiles(paths, (err, values)=>
+      parsed = _(values).map(@parseMigrationFileName).compact().value()
+      cb(null, parsed)
+    )
 
   @latestMigration: (migrations)->
     migrations ||= [];

@@ -15,8 +15,9 @@ module.exports = (grunt) ->
     config = grunt.config.get('migration.config')
     done = @async()
 
-    databaseTasks = require(path.join(config.migrationLibPath, "database_tasks"))
-    schemaMigrationModel = require(path.join(config.migrationLibPath, "schema_migration"))
+    databaseTasks = grunt.helpers.loadLibModule("database_tasks")
+    schemaMigrationModel = grunt.helpers.loadLibModule("schema_migration")
+
     grunt.log.writeln("Trying to create a new database")
 
     databaseTasks.create(config.defaultAdapter, (err)->
@@ -24,7 +25,7 @@ module.exports = (grunt) ->
       grunt.log.oklns("Database created successfully")
 
       grunt.log.writeln("Creating version table")
-      schemaMigrationModel.create(config, (err, Model)->
+      schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
         return grunt.fail.fatal(err) if err
         grunt.log.oklns("table created successfully")
         done()
