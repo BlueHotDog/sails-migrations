@@ -1,7 +1,10 @@
 path = require('path')
 
 class SailsIntegration
+  cache = null;
+
   @loadSailsConfig: (modulesPath, cb)->
+    return cb(null, cache) if cache
     options =
       globals: false
       loadHooks: ['moduleloader', 'userconfig', 'orm']
@@ -24,7 +27,7 @@ class SailsIntegration
         defaultAdapterName: defaultAdapterName
         defaultAdapter: adapter
         sailsPath: sailsPath
-
+      cache = config;
       return cb(null, config)
     )
 

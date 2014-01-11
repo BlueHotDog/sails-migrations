@@ -4,27 +4,29 @@
 ###
 path = require('path')
 
-module.exports = (grunt, done) ->
+module.exports = (grunt) ->
   grunt.registerTask('migration:statusTask', 'checks the status of the migrations', ()->
     done = @async()
     @requires('migration:loadConfig')
-    #@requiresConfig('migration.config')
+    @requiresConfig('migration.config')
 
     config = grunt.config.get('migration.config')
     SchemaMigration = require("#{grunt.config.get('migration.config.migrationLibPath')}/schema_migration")(config.defaultAdapterName)
 
-    options = {adapters:{}}
-    options.adapters[config.defaultAdapterName] = config.defaultAdapter
-
+    SchemaMigration.create(options, (err, Model)->
+      console.log(err,Model)
+      done()
+    )
     new SchemaMigration(options, (err, Model)->
-      console.log Model.define(Model.attributes, ->
-        result = Model.create(version: 1).done( (err, result)->
-          console.log err, result
-          done()
-        )
+#      grunt.log.writeln("Checking if #{SchemaMigration::tableName} exists")
+      Model.describe((err, attributes)->
+#        return grunt.fail.fatal(err) if err
+#        return grunt.fail.fatal("#{SchemaMigration::tableName} does not exists") unless attributes
+#
+#        done()
       )
     )
   )
 
-  grunt.registerTask('migration:status', ['migration:loadConfig', 'migration:statusTask'])
+  grunt.registerTask('migration:status', 'Display status of migrations', ['migration:loadConfig', 'migration:statusTask'])
 
