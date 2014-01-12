@@ -41,9 +41,6 @@ class Migration
 
   @nextMigrationNumber: -> moment().format('YYYYMMDDHHmmss')
 
-  @migrations: (path)->
-    _.map(@allMigrationsFiles(path), @parseMigrationFileName)
-
   @basePath: ->
     '/vagrant/sails-migrations/test/'
 

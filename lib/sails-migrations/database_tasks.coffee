@@ -21,16 +21,16 @@ class DatabaseTasks
     @migrationsPath ||= 'db/migrate'
 
   @migrate: (adapter, cb)->
-    migrations = Migration.migrations(@migrationsPath())
-    if _.isEmpty(migrations)
-      cb(null, [])
-    else
-      _.each(migrations, (migration)->
-        console.log "running migration #{migration}"
-        runner = new MigrationRunner(migration)
-        console.dir runner
-        runner.up(adapter, cb)
-      )
+    Migration.allMigrationFilesParsed(@migrationsPath(), (err, migrations)->
+      if _.isEmpty(migrations)
+        cb(null, [])
+      else
+        _.each(migrations, (migration)->
+          console.log "running migration #{migration}"
+          runner = new MigrationRunner(migration)
+          runner.up(adapter, cb)
+        )
+    )
 
   @drop: (adapter, cb)->
     switch adapter.identity

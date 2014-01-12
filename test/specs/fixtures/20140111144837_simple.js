@@ -4,3 +4,4 @@ exports.up = function(adapter, done) {
 exports.down = function(adapter, done) { 
   done();
 };
+console.log(exports);

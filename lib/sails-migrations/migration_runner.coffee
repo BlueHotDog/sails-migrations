@@ -8,6 +8,8 @@ class MigrationRunner
     migration = @requireMigration()
     options = {adapters:{}}
     options.adapters["adapterName"] = adapter
+    console.log 'before running migration up'
+    console.log @migrationData.path, migration.up, require(@migrationData.path)
 
     migration.up(adapter, (err)=>
       return cb(err) if err

@@ -10,11 +10,13 @@ DatabaseTasks = rek("lib/sails-migrations/database_tasks.coffee")
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
 migrationsPath = path.resolve('test/example_app/db/migrations')
 
-cleanupMigrationFiles = (migrationsPath)->
-  files = Migration.allMigrationsFiles(migrationsPath)
-  _.each(files, (file)->
-    console.log 'deleting file', file
-    fs.unlinkSync(file)
+cleanupMigrationFiles = (migrationsPath, cb)->
+  Migration.allMigrationsFiles(migrationsPath, (err, files)->
+    _.each(files, (file)->
+      console.log 'deleting file', file
+      fs.unlinkSync(file)
+    )
+    cb()
   )
 
 copyFixturesToMigrationsPath = (count)->
@@ -34,8 +36,9 @@ describe 'migration:migrate', ->
       @config = config
       @adapter = @config.defaultAdapter
       sinon.stub(DatabaseTasks, 'migrationsPath', (-> migrationsPath))
-      cleanupMigrationFiles(migrationsPath)
-      done()
+      cleanupMigrationFiles(migrationsPath, ->
+        done()
+      )
     )
 
   it 'should run 1 migrations for 1 migration files', (done)->
