@@ -1,20 +1,45 @@
 fs = require('fs')
-path = require('path')
+glob = require('glob')
 _ = require('lodash')
-Migration = require('../../lib/sails-migrations/migration')
-cleanupMigrationFiles = ->
-  migrationPath = path.join(__dirname, 'example_app', 'db', 'migrations')
-  console.log 'deleting files', migrationPath
-  _.each(Migration.allMigrationsFiles(migrationPath), (file)->
+sinon = require('sinon')
+path = require('path')
+assert = require('assert')
+
+Migration = rek('lib/sails-migrations/migration')
+DatabaseTasks = rek("lib/sails-migrations/database_tasks.coffee")
+SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
+migrationsPath = path.resolve('test/example_app/db/migrations')
+
+cleanupMigrationFiles = (migrationsPath)->
+  files = Migration.allMigrationsFiles(migrationsPath)
+  _.each(files, (file)->
     console.log 'deleting file', file
     fs.unlinkSync(file)
   )
 
+copyFixturesToMigrationsPath = (count)->
+  fixturePath = path.resolve('test/specs/fixtures')
+  migrationFixtures = glob.sync("#{fixturePath}/*.js", {})
+  console.log fixturePath, migrationFixtures
+  _.each(migrationFixtures, (file)->
+    outputPath = "#{migrationsPath}/#{path.basename(file, '.js')}.js"
+    console.log "copying #{file} to #{outputPath}"
+    fs.createReadStream(file).pipe(fs.createWriteStream(outputPath));
+  )
+
 describe 'migration:migrate', ->
-  beforeEach ->
-    cleanupMigrationFiles()
+  beforeEach (done)->
+    modulesPath = path.resolve("test/example_app/node_modules")
+    SailsIntegration.loadSailsConfig(modulesPath, (err,config)=>
+      @config = config
+      @adapter = @config.defaultAdapter
+      sinon.stub(DatabaseTasks, 'migrationsPath', (-> migrationsPath))
+      cleanupMigrationFiles(migrationsPath)
+      done()
+    )
 
-  it 'should run no migrations for 0 migrations', (done)->
-    console.log 'aaa'
-    done()
-
+  it 'should run 1 migrations for 1 migration files', (done)->
+    copyFixturesToMigrationsPath(1)
+    DatabaseTasks.migrate(@adapter, ->
+      done()
+    )

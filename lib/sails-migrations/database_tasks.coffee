@@ -1,4 +1,7 @@
 exec = require('child_process').exec
+_ = require('lodash')
+Migration = require('./migration')
+MigrationRunner = require('./migration_runner')
 LOCAL_HOSTS = ['127.0.0.1', 'localhost']
 class DatabaseTasks
   @executeQuery = (adapter, query, cb) ->
@@ -13,9 +16,21 @@ class DatabaseTasks
           return cb(err)
         )
 
-  @migrations_paths: ->
+  @migrationsPath: ->
     #TODO: sails should have something similar to rails Rails.application.paths['db/migrate'].to_a
-    @migrations_paths ||= 'db/migrate'
+    @migrationsPath ||= 'db/migrate'
+
+  @migrate: (adapter, cb)->
+    migrations = Migration.migrations(@migrationsPath())
+    if _.isEmpty(migrations)
+      cb(null, [])
+    else
+      _.each(migrations, (migration)->
+        console.log "running migration #{migration}"
+        runner = new MigrationRunner(migration)
+        console.dir runner
+        runner.up(adapter, cb)
+      )
 
   @drop: (adapter, cb)->
     switch adapter.identity
