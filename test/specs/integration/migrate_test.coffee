@@ -5,13 +5,13 @@ sinon = require('sinon')
 path = require('path')
 assert = require('assert')
 
-Migration = rek('lib/sails-migrations/migration')
+MigrationPath = rek('lib/sails-migrations/migration_path')
 MigrationRunner = rek("lib/sails-migrations/migration_runner.coffee")
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
 migrationsPath = path.resolve('test/example_app/db/migrations')
 
 cleanupMigrationFiles = (migrationsPath, cb)->
-  Migration.allMigrationsFiles(migrationsPath, (err, files)->
+  MigrationPath.allMigrationsFiles(migrationsPath, (err, files)->
     _.each(files, fs.unlinkSync.bind(fs))
     cb()
   )
@@ -30,7 +30,7 @@ describe 'migration:migrate', ->
     SailsIntegration.loadSailsConfig(modulesPath, (err, config)=>
       @config = config
       @adapter = @config.defaultAdapter
-      sinon.stub(Migration, 'migrationsPaths', (-> [migrationsPath]))
+      sinon.stub(MigrationPath, 'migrationsPaths', (-> [migrationsPath]))
       cleanupMigrationFiles(migrationsPath, ->
         done()
       )

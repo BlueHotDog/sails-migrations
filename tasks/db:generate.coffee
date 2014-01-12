@@ -8,15 +8,15 @@ path = require('path')
 moment = require('moment')
 
 module.exports = (grunt) ->
-  grunt.registerTask("migration:generateInternalTask", ->
-    @requires("migration:loadConfig")
+  grunt.registerTask("db:generateInternalTask", ->
+    @requires("db:loadConfig")
     @requiresConfig("migration.config")
     grunt.fail.fatal("The --name parameter is required") unless grunt.option('name')
 
     config = grunt.config.get('migration.config')
 
-    migration = require(path.join(config.migrationLibPath, "migration"))
-    migrationFullname = migration.generateMigrationName(grunt.option('name'))
+    MigrationPath = require(path.join(config.migrationLibPath, "migration_path"))
+    migrationFullname = MigrationPath.generateMigrationName(grunt.option('name'))
     migrationPath = path.join(config.migrationOutDir,"#{migrationFullname}.js")
 
     templates = dot.process(path: config.templatesPath)
@@ -25,4 +25,4 @@ module.exports = (grunt) ->
     fs.writeFileSync(migrationPath, migrationContent)
   )
 
-  grunt.registerTask("migration:generate", "run database migrations", ['migration:loadConfig', 'migration:generateInternalTask'])
+  grunt.registerTask("db:generate", "run database migrations", ['db:loadConfig', 'db:generateInternalTask'])

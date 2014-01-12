@@ -9,7 +9,7 @@ moment = require('moment')
 
 module.exports = (grunt) ->
   grunt.registerTask("db:createInternalTask", ->
-    @requires("migration:loadConfig")
+    @requires("db:loadConfig")
     @requiresConfig("migration.config")
 
     config = grunt.config.get('migration.config')
@@ -33,10 +33,10 @@ module.exports = (grunt) ->
     )
   )
 
-  grunt.registerTask("db:create", "run database migrations", ['migration:loadConfig', 'db:createInternalTask'])
+  grunt.registerTask("db:create", "run database migrations", ['db:loadConfig', 'db:createInternalTask'])
 
   grunt.registerTask("db:dropInternalTask", ->
-    @requires("migration:loadConfig")
+    @requires("db:loadConfig")
     @requiresConfig("migration.config")
 
     config = grunt.config.get('migration.config')
@@ -51,8 +51,8 @@ module.exports = (grunt) ->
     )
   )
 
-  grunt.registerTask("db:drop", "drops the database", ['migration:loadConfig', 'db:dropInternalTask'])
+  grunt.registerTask("db:drop", "drops the database", ['db:loadConfig', 'db:dropInternalTask'])
 
 
 
-  grunt.registerTask("db:reset", "recreates the database", ['migration:loadConfig', 'db:dropInternalTask', 'db:createInternalTask'])
+  grunt.registerTask("db:reset", "recreates the database", ['db:loadConfig', 'db:dropInternalTask', 'db:createInternalTask'])

@@ -1,2 +1,2 @@
-Migration = require('./sails-migrations/migration')
-Migration.migrations(Migration.migrations_paths())
+MigrationPath = require('./sails-migrations/migration_path')
+MigrationPath.migrations(MigrationPath.migrations_paths())

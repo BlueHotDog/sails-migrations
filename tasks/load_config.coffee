@@ -7,7 +7,7 @@ _ = require('lodash')
 SailsIntegration = require('../lib/sails-migrations/sails_integration')
 
 module.exports = (grunt) ->
-  grunt.registerTask("migration:loadConfig", "internal task to load all needed configuration", ()->
+  grunt.registerTask("db:loadConfig", "internal task to load all needed configuration", ()->
     done = @async()
     #We're doing this only under test because the example_app configures the sails-migration package to be linked to the local
     #version of sails-migration, and since it will run under the real path of sails-migrations when trying to require 'sails',

@@ -1,7 +1,7 @@
 migrationHelper = require('./migration')
 _ = require('lodash')
 SchemaMigration = require('./schema_migration')
-Migration = require('./migration')
+MigrationPath = require('./migration_path')
 Adapter = require('./adapter')
 
 class MigrationRunner
@@ -29,7 +29,7 @@ class MigrationRunner
 
   @migrate: (adapter, cb)->
     ourAdapter = new Adapter(adapter)
-    Migration.allMigrationFilesParsed(Migration.migrationsPaths(), (err, migrations)->
+    MigrationPath.allMigrationFilesParsed(MigrationPath.migrationsPaths(), (err, migrations)->
       if _.isEmpty(migrations)
         cb(null, [])
       else

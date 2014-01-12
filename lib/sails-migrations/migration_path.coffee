@@ -5,7 +5,7 @@ glob = require('glob')
 moment = require('moment')
 _s = require('underscore.string')
 
-class MigrationPath
+class Migration
 
   @allMigrationsFiles: (paths = @migrationsPaths(), cb) ->
     paths = [paths] unless _.isArray(paths)
@@ -48,4 +48,4 @@ class MigrationPath
     ['/vagrant/sails-migrations/test/db/migrate']
 
 
-module.exports = MigrationPath
+module.exports = Migration

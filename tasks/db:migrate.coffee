@@ -7,14 +7,14 @@ path = require('path')
 module.exports = (grunt, done) ->
   grunt.registerTask('db:migrateTask', 'migrate', ()->
     done = @async()
-    @requires('migration:loadConfig')
+    @requires('db:loadConfig')
     config = grunt.config.get('migration.config')
 
     MigrationRunner = grunt.helpers.loadLibModule('migration_runner')
-    Migration = grunt.helpers.loadLibModule('migration')
+    MigrationPath = grunt.helpers.loadLibModule('migration_path')
 
-    Migration.allMigrationsFiles([config.migrationOutDir], (err, migrationFiles)->
-      migrationRunner = new MigrationRunner(Migration.latestMigration(migrationFiles))
+    MigrationPath.allMigrationsFiles([config.migrationOutDir], (err, migrationFiles)->
+      migrationRunner = new MigrationRunner(MigrationPath.latestMigration(migrationFiles))
       migrationRunner.up(config.defaultAdapter, (err, model)->
         return grunt.fail.fatal(err) if err
         grunt.log.oklns("Successfully migrated version:\t#{migrationRunner.migrationData.version}")
@@ -24,5 +24,5 @@ module.exports = (grunt, done) ->
     )
   )
 
-  grunt.registerTask('db:migrate', ['migration:loadConfig', 'db:migrateTask'])
+  grunt.registerTask('db:migrate', ['db:loadConfig', 'db:migrateTask'])
 
