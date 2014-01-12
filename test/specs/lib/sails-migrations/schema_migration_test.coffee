@@ -14,14 +14,18 @@ describe 'SchemaMigration', ->
       SchemaMigration.define(@adapter, done)
     )
 
-  describe 'deleteAllByVersion', ->
-    beforeEach (done)->
-      @version = 1
-      SchemaMigration.getInstance(@adapter, (err, Model)=>
-        return done(err) if err
-        @SchemaMigration = Model
-        Model.create({version: @version}).exec(done)
+  beforeEach (done)->
+    @version = 1
+    SchemaMigration.getInstance(@adapter, (err, Model)=>
+      return done(err) if err
+      @SchemaMigration = Model
+      Model.create({version: @version}).exec( (err)=>
+        console.log(err) if err
+        done()
       )
+    )
+
+  describe 'deleteAllByVersion', ->
 
     it 'should be able to delete by version', (done)->
       SchemaMigration.deleteAllByVersion(@adapter, @version, (err)=>
@@ -31,6 +35,15 @@ describe 'SchemaMigration', ->
           assert.equal(models.length, 0)
           done()
         )
+      )
+
+  describe 'getAllVersions', ->
+
+    it 'should be able to get all versions', (done)->
+      SchemaMigration.getAllVersions(@adapter, (err, versions)=>
+        return done(err) if err
+        assert.equal(versions.length, 1)
+        done()
       )
 
   afterEach (done)->

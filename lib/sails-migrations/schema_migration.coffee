@@ -3,6 +3,7 @@ INDEX_NAME = "unique_schema_migrations"
 
 Waterline = require('waterline')
 SailsIntegration = require('./sails_integration')
+_ = require('lodash')
 
 class SchemaMigration extends Waterline.Collection
   tableName: TABLE_NAME
@@ -29,7 +30,13 @@ class SchemaMigration extends Waterline.Collection
       Model.define(Model.attributes, cb)
     )
 
-  @getAllVersions: ->
+  @getAllVersions: (adapter, cb)->
+    @getInstance(adapter, (err, Model)=>
+      Model.find().exec( (err, models)=>
+        return cb(err) if err
+        cb(null, _.pluck(models, 'version'))
+      )
+    )
 
   @deleteAllByVersion: (adapter, version, cb)->
     @getInstance(adapter, (err, Model)=>
