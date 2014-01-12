@@ -67,7 +67,10 @@ class Migrator
         #end
       )
 
-      Promise.all(promises).then(cb)
+      #TODO: We need to resolve the errors properly
+      Promise.all(promises).then( (errors)->
+        cb(null)
+      )
     )
 
   executeMigrationInTransaction: (migration, direction, cb)->

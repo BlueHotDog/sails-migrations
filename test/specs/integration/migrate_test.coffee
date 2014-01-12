@@ -4,6 +4,7 @@ _ = require('lodash')
 sinon = require('sinon')
 path = require('path')
 assert = require('assert')
+mkdirp = require('mkdirp')
 
 MigrationPath = rek('lib/sails-migrations/migration_path.coffee')
 DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
@@ -12,6 +13,7 @@ SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
 ourAdapter = rek("lib/sails-migrations/adapter.coffee")
 migrationsPath = path.resolve('test/example_app/db/migrations')
+definitionsPath = path.resolve('test/example_app/db/migrations/definitions')
 
 cleanupMigrationFiles = (migrationsPath, cb)->
   MigrationPath.allMigrationsFiles(migrationsPath, (err, files)->
@@ -19,13 +21,20 @@ cleanupMigrationFiles = (migrationsPath, cb)->
     cb()
   )
 
-copyFixturesToMigrationsPath = ->
-  fixturePath = path.resolve('test/specs/fixtures')
-  migrationFixtures = glob.sync("#{fixturePath}/*.js", {})
-  _.each(migrationFixtures, (file)->
-    outputPath = "#{migrationsPath}/#{path.basename(file)}"
+copy = (files, outputPath)->
+  _.each(files, (file)->
+    outputPath = "#{outputPath}/#{path.basename(file)}"
     fs.writeFileSync(outputPath, fs.readFileSync(file)) #copying
   )
+
+copyFixturesToMigrationsPath = (scope)->
+  mkdirp.sync(definitionsPath) #This should create the db/migrations + db/migrations/definitions dirs in the example_app
+  console.log 'hi'
+  fixturePath = path.resolve('test/specs/fixtures/migrations')
+  migrationFixtures = glob.sync("#{fixturePath}/*#{scope}*.js", {})
+  definitionFixtures = glob.sync("#{fixturePath}/definitions/*#{scope}*.js", {})
+  copy(migrationFixtures, migrationsPath)
+  copy(definitionFixtures, definitionsPath)
 
 describe 'db:migrate', ->
   beforeEach (done)->
@@ -33,6 +42,7 @@ describe 'db:migrate', ->
     SailsIntegration.loadSailsConfig(modulesPath, (err, config)=>
       @config = config
       @adapter = @config.defaultAdapter
+      @ourAdapter = new ourAdapter(@adapter)
       cleanupMigrationFiles(migrationsPath, ->
         done()
       )
@@ -49,12 +59,22 @@ describe 'db:migrate', ->
       Model.define(@adapter, done)
     )
 
-  it 'should run 1 migrations for 1 migration files', (done)->
-    copyFixturesToMigrationsPath()
-    Migrator.migrate(@adapter, migrationsPath, null, (errors)->
-      #TODO: We need to resolve the errors properly
-      done()
+  it 'should be able to run a migration', (done)->
+    tableName = 'one_migration'
+    oneMigrationDefinitionPath = path.resolve("test/specs/fixtures/migrations/definitions/one_migration.js")
+    oneMigrationDefinition = require(oneMigrationDefinitionPath)
+    copyFixturesToMigrationsPath(tableName)
+    Migrator.migrate(@adapter, migrationsPath, null, (err)=>
+      return done(err) if err
+      @ourAdapter.describe(tableName, (err, definition)->
+        return done(err) if err
+        assert.equal(_.keys(definition).length, _.keys(oneMigrationDefinition).length)
+        done()
+      )
     )
 
+  it 'should be able to run 2 migrations', (done)->
+    done()
+
   afterEach (done)->
-    new ourAdapter(@adapter).drop(SchemaMigration::tableName, done)
+    @ourAdapter.drop(SchemaMigration::tableName, done)
