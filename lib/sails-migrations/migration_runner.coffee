@@ -1,5 +1,7 @@
 migrationHelper = require('./migration')
+_ = require('lodash')
 SchemaMigration = require('./schema_migration')
+Migration = require('./migration')
 
 class MigrationRunner
   constructor: (@migrationData)->
@@ -8,8 +10,6 @@ class MigrationRunner
     migration = @requireMigration()
     options = {adapters:{}}
     options.adapters["adapterName"] = adapter
-    console.log 'before running migration up'
-    console.log @migrationData.path, migration.up, require(@migrationData.path)
 
     migration.up(adapter, (err)=>
       return cb(err) if err
@@ -27,5 +27,16 @@ class MigrationRunner
 
   requireMigration: ->
     require(@migrationData.path)
+
+  @migrate: (adapter, cb)->
+    Migration.allMigrationFilesParsed(Migration.migrationsPaths(), (err, migrations)->
+      if _.isEmpty(migrations)
+        cb(null, [])
+      else
+        _.each(migrations, (migration)->
+          runner = new MigrationRunner(migration)
+          runner.up(adapter, cb)
+        )
+    )
 
 module.exports = MigrationRunner

@@ -6,7 +6,7 @@ path = require('path')
 assert = require('assert')
 
 Migration = rek('lib/sails-migrations/migration')
-DatabaseTasks = rek("lib/sails-migrations/database_tasks.coffee")
+MigrationRunner = rek("lib/sails-migrations/migration_runner.coffee")
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
 migrationsPath = path.resolve('test/example_app/db/migrations')
 
@@ -30,7 +30,7 @@ describe 'migration:migrate', ->
     SailsIntegration.loadSailsConfig(modulesPath, (err, config)=>
       @config = config
       @adapter = @config.defaultAdapter
-      sinon.stub(DatabaseTasks, 'migrationsPath', (-> migrationsPath))
+      sinon.stub(Migration, 'migrationsPaths', (-> [migrationsPath]))
       cleanupMigrationFiles(migrationsPath, ->
         done()
       )
@@ -38,6 +38,6 @@ describe 'migration:migrate', ->
 
   it 'should run 1 migrations for 1 migration files', (done)->
     copyFixturesToMigrationsPath()
-    DatabaseTasks.migrate(@adapter, ->
+    MigrationRunner.migrate(@adapter, ->
       done()
     )
