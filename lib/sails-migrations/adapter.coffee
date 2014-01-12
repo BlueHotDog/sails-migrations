@@ -10,6 +10,24 @@ class Adapter
       @adapter.define(tableName, definition, cb)
     )
 
+  drop: (tableName, cb)->
+    @registerCollection(tableName, (err)=>
+      return cb(err) if err
+      @adapter.drop(tableName, cb)
+    )
+
+  addAttribute: (tableName, attrName, attrDef, cb)->
+    @registerCollection(tableName, (err)=>
+      return cb(err) if err
+      @adapter.addAttribute(tableName, attrName, attrDef, cb)
+    )
+
+  removeAttribute: (tableName, attrName, cb)->
+    @registerCollection(tableName, (err)=>
+      return cb(err) if err
+      @adapter.removeAttribute(tableName, attrName, cb)
+    )
+
   query: (query, data, cb)->
     tableName = 'query'
     @registerCollection(tableName, (err)=>
