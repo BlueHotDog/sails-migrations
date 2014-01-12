@@ -10,19 +10,12 @@ class MigrationRunner
   up: (adapter, cb)->
     migration = @requireMigration()
 
-    migration.up(adapter, (err)=>
-      return cb(err) if err
-
-      SchemaMigration.getInstance(adapter, (err, Model)=>
-        Model.create({version: @migrationData.version}, (err, model)->
-          return cb(err) if err
-          cb(null, model)
-        )
-      )
-    )
+    migration.up(adapter, cb)
 
   down: (adapter, cb)->
-    migration.down(cb)
+    migration = @requireMigration()
+
+    migration.down(adapter, cb)
 
   requireMigration: ->
     require(@migrationData.path)
@@ -38,17 +31,5 @@ class MigrationRunner
 
   migrate: (adapter, direction, cb)->
     @[direction](adapter, cb)
-
-  @migrate: (adapter, cb)->
-    ourAdapter = new Adapter(adapter)
-    MigrationPath.allMigrationFilesParsed(MigrationPath.migrationsPaths(), (err, migrations)->
-      if _.isEmpty(migrations)
-        cb(null, [])
-      else
-        _.each(migrations, (migration)->
-          runner = new MigrationRunner(migration)
-          runner.up(ourAdapter, cb)
-        )
-    )
 
 module.exports = MigrationRunner

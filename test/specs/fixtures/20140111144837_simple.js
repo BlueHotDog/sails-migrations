@@ -1,6 +1,7 @@
 exports.up = function(adapter, done) {
   adapter.define('simple', {
     first_name: {type: 'STRING'},
+    last_name: {type: 'STRING'},
     id: {
       type: 'INTEGER',
       autoIncrement: true,

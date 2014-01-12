@@ -2,6 +2,7 @@ sets = require('simplesets')
 SchemaMigration = require('./schema_migration')
 MigrationPath = require('./migration_path')
 MigrationRunner = require('./migration_runner')
+ourAdapter = require('./adapter')
 _ = require('lodash')
 Promise = require('bluebird')
 
@@ -9,7 +10,7 @@ Promise = require('bluebird')
 class Migrator
   constructor: (@adapter, @direction, @_migrations, @targetVersion=null)->
     #TODO: Make sure the adapter supports migrations
-    validate(@_migrations)
+    @validate(@_migrations)
     
   validate: (migrations)->
     #TODO: 
@@ -21,8 +22,7 @@ class Migrator
 
   @migrate: (adapter, migrationsPaths, targetVersion, cb)-> 
     if !targetVersion
-      @up(adapter, migrationsPaths, targetVersion, (err, migrator)->
-      )
+      @up(adapter, migrationsPaths, targetVersion, cb)
       #else if current_version == 0 && target_version == 0
       #[]
       #when current_version > target_version
@@ -41,37 +41,39 @@ class Migrator
       migrator.migrate(cb)
     )
 
-  @currentVersion: ()->
-    if Base.connection.table_exists?(sm_table)
-      get_all_versions.max || 0
-    else
-      0
-    end
+  @currentVersion: ->
+    #if Base.connection.table_exists?(sm_table)
+      # get_all_versions.max || 0
+      #else
+      #0
+      #end
 
   migrate: (cb)->
     if !@target() && @targetVersion && @targetVersion > 0
       return cb("Unknown migration version error #{targetVersion}")
 
-    executeMigrationInTransaction = Promise.promisify(@executeMigrationInTransaction)
+    executeMigrationInTransaction = Promise.promisify(@executeMigrationInTransaction.bind(@))
 
-    SchemaMigration.getAllVersions( (err, versions)=>
-      @migrated = versions
-      promises = _.map(@runnable(), (migration)->
+    SchemaMigration.getAllVersions(@adapter, (err, versions)=>
+      return cb(err) if err
+      @migrated = new sets.Set(versions)
+      promises = _.map(@runnable(), (migration)=>
         #TODO: Figure out how to do logging properly
-        console.log "Migrating to #{migration.name} (#{migration.version})"
+        console.log "Migrating to #{migration.name()} (#{migration.version()})"
         executeMigrationInTransaction(migration, @direction)
         #rescue => e
         #canceled_msg = use_transaction?(migration) ? "this and " : ""
         #raise StandardError, "An error has occurred, #{canceled_msg}all later migrations canceled:\n\n#{e}", e.backtrace
         #end
       )
-      Promise.settle(promises).then(cb)
+
+      Promise.all(promises).then(cb)
     )
 
   executeMigrationInTransaction: (migration, direction, cb)->
-    ddlTransaction(migration, ->
-      migration.migrate(@adapter, direction, (err)->
-        recordVersionStateAfterMigrating(migration.version())
+    @ddlTransaction(migration, =>
+      migration.migrate(new ourAdapter(@adapter), direction, (err)=>
+        @recordVersionStateAfterMigrating(migration.version())
         cb(err)
       )
     )
@@ -82,7 +84,7 @@ class Migrator
       Promise.promisify(SchemaMigration.deleteAllByVersion(@adapter, version))
     else
       @migrated.add(version)
-      Promise.promisify(SchemaMigration.create(adapter, { version: version }))
+      Promise.promisify(SchemaMigration.create(@adapter, { version: version }))
 
   ddlTransaction: (migration, block)->
     #TODO: figure out how to use transactions
@@ -90,7 +92,7 @@ class Migrator
 
   migrations: ->
     clone = _.clone(@_migrations)
-    if @isDown() clone.reverse() else clone
+    if @isDown() then clone.reverse() else clone
       
   runnable: ->
     runnable = _(@migrations()[@start()..@finish()])
@@ -114,9 +116,9 @@ class Migrator
     @direction == 'down'
 
   ran: (migration)->
-    _.contains(@migrated(), migration.version())
+    _.contains(@migrated, migration.version())
 
   target: ->
     _.detect(@migrations(), (migration)=> migration.version() == @targetVersion)
 
-exports = Migrator
+module.exports = Migrator
