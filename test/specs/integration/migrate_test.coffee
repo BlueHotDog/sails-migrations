@@ -12,27 +12,22 @@ migrationsPath = path.resolve('test/example_app/db/migrations')
 
 cleanupMigrationFiles = (migrationsPath, cb)->
   Migration.allMigrationsFiles(migrationsPath, (err, files)->
-    _.each(files, (file)->
-      console.log 'deleting file', file
-      fs.unlinkSync(file)
-    )
+    _.each(files, fs.unlinkSync.bind(fs))
     cb()
   )
 
-copyFixturesToMigrationsPath = (count)->
+copyFixturesToMigrationsPath = ->
   fixturePath = path.resolve('test/specs/fixtures')
   migrationFixtures = glob.sync("#{fixturePath}/*.js", {})
-  console.log fixturePath, migrationFixtures
   _.each(migrationFixtures, (file)->
-    outputPath = "#{migrationsPath}/#{path.basename(file, '.js')}.js"
-    console.log "copying #{file} to #{outputPath}"
-    fs.createReadStream(file).pipe(fs.createWriteStream(outputPath));
+    outputPath = "#{migrationsPath}/#{path.basename(file)}"
+    fs.writeFileSync(outputPath, fs.readFileSync(file)) #copying
   )
 
 describe 'migration:migrate', ->
   beforeEach (done)->
     modulesPath = path.resolve("test/example_app/node_modules")
-    SailsIntegration.loadSailsConfig(modulesPath, (err,config)=>
+    SailsIntegration.loadSailsConfig(modulesPath, (err, config)=>
       @config = config
       @adapter = @config.defaultAdapter
       sinon.stub(DatabaseTasks, 'migrationsPath', (-> migrationsPath))
@@ -42,7 +37,7 @@ describe 'migration:migrate', ->
     )
 
   it 'should run 1 migrations for 1 migration files', (done)->
-    copyFixturesToMigrationsPath(1)
+    copyFixturesToMigrationsPath()
     DatabaseTasks.migrate(@adapter, ->
       done()
     )
