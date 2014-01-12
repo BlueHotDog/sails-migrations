@@ -23,7 +23,6 @@ class SchemaMigration extends Waterline.Collection
     SchemaMigration::adapter = "adapter"
     new @(options, cb)
 
-
   @define: (adapter, cb)->
     @getInstance(adapter, (err, Model)->
       return cb(err) if err
@@ -33,5 +32,12 @@ class SchemaMigration extends Waterline.Collection
   @getAllVersions: ->
 
   @deleteAllByVersion: (adapter, version, cb)->
+    @getInstance(adapter, (err, Model)=>
+      return cb(err) if err
+      Model.find().where({version: version}).exec((err, models)=>
+        return cb(err) if err
+        models[0].destroy(cb)
+      )
+    )
 
 module.exports = SchemaMigration

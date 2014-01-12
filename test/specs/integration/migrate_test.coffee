@@ -5,7 +5,7 @@ sinon = require('sinon')
 path = require('path')
 assert = require('assert')
 
-MigrationPath = rek('lib/sails-migrations/migration_path')
+MigrationPath = rek('lib/sails-migrations/migration_path.coffee')
 MigrationRunner = rek("lib/sails-migrations/migration_runner.coffee")
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
 migrationsPath = path.resolve('test/example_app/db/migrations')
