@@ -46,5 +46,15 @@ describe 'SchemaMigration', ->
         done()
       )
 
+  describe 'create', ->
+
+    it 'should be able to create a version with attributes', (done)->
+      versionSample = '123'
+      SchemaMigration.create(@adapter, {version: versionSample}, (err, model)=>
+        return done(err) if err
+        assert.equal(model.version, versionSample)
+        done()
+      )
+
   afterEach (done)->
     new ourAdapter(@adapter).drop(SchemaMigration::tableName, done)

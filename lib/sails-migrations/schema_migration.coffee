@@ -24,6 +24,12 @@ class SchemaMigration extends Waterline.Collection
     SchemaMigration::adapter = "adapter"
     new @(options, cb)
 
+  @create: (adapter, attributes, cb)->
+    @getInstance(adapter, (err, Model)->
+      return cb(err) if err
+      Model.create(attributes, cb)
+    )
+
   @define: (adapter, cb)->
     @getInstance(adapter, (err, Model)->
       return cb(err) if err

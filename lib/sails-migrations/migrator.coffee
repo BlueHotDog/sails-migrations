@@ -23,15 +23,15 @@ class Migrator
     if !targetVersion
       @up(adapter, migrationsPaths, targetVersion, (err, migrator)->
       )
-    else if current_version == 0 && target_version == 0
-      []
-    when current_version > target_version
-      down(migrations_paths, target_version, &block)
-    else
-      up(migrations_paths, target_version, &block)
-    end
-    switch targetVersion
-      when null
+      #else if current_version == 0 && target_version == 0
+      #[]
+      #when current_version > target_version
+      #down(migrations_paths, target_version, &block)
+      #else
+      #up(migrations_paths, target_version, &block)
+      #end
+      #switch targetVersion
+      #when null
 
   @up: (adapter, migrationsPaths, targetVersion, cb)->
     MigrationPath.allMigrationFilesParsed(migrationsPaths, (err, migrations)->
@@ -71,7 +71,7 @@ class Migrator
   executeMigrationInTransaction: (migration, direction, cb)->
     ddlTransaction(migration, ->
       migration.migrate(@adapter, direction, (err)->
-        recordVersionStateAfterMigrating(migration.version)
+        recordVersionStateAfterMigrating(migration.version())
         cb(err)
       )
     )
