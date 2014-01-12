@@ -30,4 +30,8 @@ class SchemaMigration extends Waterline.Collection
       Model.define(Model.attributes, cb)
     )
 
+  @getAllVersions: ->
+
+  @deleteAllByVersion: (adapter, version, cb)->
+
 module.exports = SchemaMigration

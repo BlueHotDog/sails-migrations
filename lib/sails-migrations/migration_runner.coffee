@@ -27,6 +27,18 @@ class MigrationRunner
   requireMigration: ->
     require(@migrationData.path)
 
+  version: ->
+    @migrationData.version
+
+  name: ->
+    @migrationData.name
+
+  path: ->
+    @migrationData.path
+
+  migrate: (adapter, direction, cb)->
+    @[direction](adapter, cb)
+
   @migrate: (adapter, cb)->
     ourAdapter = new Adapter(adapter)
     MigrationPath.allMigrationFilesParsed(MigrationPath.migrationsPaths(), (err, migrations)->
