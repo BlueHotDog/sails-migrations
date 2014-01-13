@@ -37,6 +37,12 @@ SchemaMigration.define = (adapter, cb)->
     Model.define(Model.attributes, cb)
   )
 
+SchemaMigration.describe = (adapter, cb)->
+  @getInstance(adapter, (err, Model)->
+    return cb(err) if err
+    Model.describe(cb)
+  )
+
 SchemaMigration.drop = (adapter, cb)->
   @getInstance(adapter, (err, Model)->
     return cb(err) if err

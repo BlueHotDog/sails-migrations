@@ -42,6 +42,7 @@
   "devDependencies": {
     "mocha": "~1.16.2",
     "should": "~2.1.1",
-    "sinon": "~1.7.3"
+    "sinon": "~1.7.3",
+    "chai": "~1.8.1"
   }
 }

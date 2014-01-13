@@ -484,6 +484,6 @@ module.exports = function (grunt) {
   //     console.error(filepath + ' has ' + action + ', but could not signal the Sails.js server: ' + e.message);
   //   });
   // });
-  grunt.loadNpmTasks('gake');
-  grunt.loadNpmTasks('sails-migrations');
+//  grunt.loadNpmTasks('gake');
+//  grunt.loadNpmTasks('sails-migrations');
 };

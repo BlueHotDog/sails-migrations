@@ -1,5 +1,5 @@
 --compilers coffee:coffee-script
---require should
+--require chai
 --require coffee-script
 --require test/specs/spec_helper
 --timeout 60000
