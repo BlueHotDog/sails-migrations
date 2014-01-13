@@ -5,7 +5,7 @@ Waterline = require('waterline')
 SailsIntegration = require('./sails_integration')
 _ = require('lodash')
 
-class SchemaMigration extends Waterline.Collection
+SchemaMigration = Waterline.Collection.extend({
   tableName: TABLE_NAME
   migrate: 'safe'
   autoCreatedAt: false
@@ -17,47 +17,44 @@ class SchemaMigration extends Waterline.Collection
       required: true
       index: true
       #null: true TODO: how do we validate this?
+})
 
-  @getInstance: (adapter, cb)->
-    options = {adapters:{}}
-    options.adapters["adapter"] = adapter
-    SchemaMigration::adapter = "adapter"
-    new SchemaMigration(options, cb)
+SchemaMigration.getInstance = (adapter, cb)->
+  options = {adapters: {}}
+  options.adapters["adapter"] = adapter
+  SchemaMigration::adapter = "adapter"
+  new SchemaMigration(options, cb)
 
-  @create: (adapter, attributes, cb)->
-    @getInstance(adapter, (err, Model)->
+SchemaMigration.create = (adapter, attributes, cb)->
+  @getInstance(adapter, (err, Model)->
+    return cb(err) if err
+    Model.create(attributes).exec(->
+      console.log("bbbbbbbbbbcccccccccc", arguments)
+      cb()
+    )
+  )
+
+SchemaMigration.define = (adapter, cb)->
+  @getInstance(adapter, (err, Model)->
+    return cb(err) if err
+    Model.define(Model.attributes, cb)
+  )
+
+SchemaMigration.getAllVersions = (adapter, cb)->
+  @getInstance(adapter, (err, Model)=>
+    Model.find().exec((err, models)=>
       return cb(err) if err
-      console.log(Model.create.toString())
-      Model.create(attributes,()->
-        console.log("bbbbbbbbbbcccccccccc", arguments)
-        cb()
-      ).exec(->
-        console.log("bbbbbbbbbbcccccccccc", arguments)
-        cb()
-      )
+      cb(null, _.pluck(models, 'version'))
     )
+  )
 
-  @define: (adapter, cb)->
-    @getInstance(adapter, (err, Model)->
+SchemaMigration.deleteAllByVersion = (adapter, version, cb)->
+  @getInstance(adapter, (err, Model)=>
+    return cb(err) if err
+    Model.find().where({version: version}).exec((err, models)=>
       return cb(err) if err
-      Model.define(Model.attributes, cb)
+      models[0].destroy(cb)
     )
-
-  @getAllVersions: (adapter, cb)->
-    @getInstance(adapter, (err, Model)=>
-      Model.find().exec( (err, models)=>
-        return cb(err) if err
-        cb(null, _.pluck(models, 'version'))
-      )
-    )
-
-  @deleteAllByVersion: (adapter, version, cb)->
-    @getInstance(adapter, (err, Model)=>
-      return cb(err) if err
-      Model.find().where({version: version}).exec((err, models)=>
-        return cb(err) if err
-        models[0].destroy(cb)
-      )
-    )
+  )
 
 module.exports = SchemaMigration
