@@ -22,31 +22,35 @@ class Migrator
 
   @migrate: (adapter, migrationsPaths, targetVersion, cb)-> 
     if !targetVersion
-      @up(adapter, migrationsPaths, targetVersion, cb)
-      #else if current_version == 0 && target_version == 0
-      #[]
-      #when current_version > target_version
-      #down(migrations_paths, target_version, &block)
-      #else
-      #up(migrations_paths, target_version, &block)
-      #end
-      #switch targetVersion
-      #when null
+      @move('up', adapter, migrationsPaths, targetVersion, cb)
+    else 
+      @currentVersion( (err, currentVersion)=>
+        return cb(err) if err
+        if currentVersion == 0 && targetVersion == 0
+          cb(null, [])
+        else if currentVersion > targetVersion
+          @move('down', adapter, migrationsPaths, targetVersion, cb)
+        else
+          @move('up', migrationsPaths, targetVersion, cb)
+      )
 
-  @up: (adapter, migrationsPaths, targetVersion, cb)->
+  @rollback: (adapter, migrationsPaths, targetVersion, cb)-> 
+    
+
+  @move: (direction, adapter, migrationsPaths, targetVersion, cb)->
     MigrationPath.allMigrationFilesParsed(migrationsPaths, (err, migrations)->
       return cb(err) if err
       migrations_runners = _.map(migrations, (migration)-> new MigrationRunner(migration))
-      migrator = new Migrator(adapter, 'up', migrations_runners, targetVersion)
+      migrator = new Migrator(adapter, direction, migrations_runners, targetVersion)
       migrator.migrate(cb)
     )
 
-  @currentVersion: ->
-    #if Base.connection.table_exists?(sm_table)
-      # get_all_versions.max || 0
-      #else
-      #0
-      #end
+  @currentVersion: (cb)->
+    SchemaMigration.getAllVersions(@adapter, (err, versions)=>
+      return cb(err) if err
+      maxVersion = _.max(versions) || 0
+      cb(null, maxVersion)
+    )
 
   migrate: (cb)->
     if !@target() && @targetVersion && @targetVersion > 0
