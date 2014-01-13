@@ -28,16 +28,19 @@ SchemaMigration.getInstance = (adapter, cb)->
 SchemaMigration.create = (adapter, attributes, cb)->
   @getInstance(adapter, (err, Model)->
     return cb(err) if err
-    Model.create(attributes).exec(->
-      console.log("bbbbbbbbbbcccccccccc", arguments)
-      cb()
-    )
+    Model.create(attributes).exec(cb)
   )
 
 SchemaMigration.define = (adapter, cb)->
   @getInstance(adapter, (err, Model)->
     return cb(err) if err
     Model.define(Model.attributes, cb)
+  )
+
+SchemaMigration.drop = (adapter, cb)->
+  @getInstance(adapter, (err, Model)->
+    return cb(err) if err
+    Model.drop(cb)
   )
 
 SchemaMigration.getAllVersions = (adapter, cb)->

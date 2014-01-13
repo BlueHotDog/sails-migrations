@@ -1,8 +1,9 @@
+--compilers coffee:coffee-script
 --require should
---timeout 60000
+--require coffee-script
 --require test/specs/spec_helper
+--timeout 60000
 --reporter spec
 --ui bdd
---compilers coffee:coffee-script
 --growl
 --recursive

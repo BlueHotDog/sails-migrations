@@ -3,6 +3,6 @@ GLOBAL.rek = function(file) {
   return require(__dirname + "/../../" + file)
 };
 
-process.on('uncaughtException', function (err) {
-  console.log(err);
-});
+process.on('uncaughtException', console.log.bind(console));
+
+GLOBAL.assert = require('assert');

@@ -12,7 +12,7 @@ DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
 Migrator = rek("lib/sails-migrations/migrator.coffee")
 SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
-ourAdapter = rek("lib/sails-migrations/adapter.coffee")
+AdapterWrapper = rek("lib/sails-migrations/adapter_wrapper.coffee")
 migrationsPath = path.resolve('test/example_app/db/migrations')
 
 cleanupMigrationFiles = (migrationsPath)->
@@ -36,7 +36,7 @@ describe 'migration', ->
     SailsIntegration.loadSailsConfig(modulesPath, (err, config)=>
       @config = config
       @adapter = @config.defaultAdapter
-      @ourAdapter = new ourAdapter(@adapter)
+      @AdapterWrapper = new AdapterWrapper(@adapter)
 
       DatabaseTasks.drop(@adapter, (err)=>
 #        console.log("err", err)
@@ -54,9 +54,9 @@ describe 'migration', ->
 
   # create the schem migrations folder
   beforeEach (done)->
-    @ourAdapter.drop(SchemaMigration::tableName, (err)=>
+    @AdapterWrapper.drop(SchemaMigration::tableName, (err)=>
       return done(err) if err
-      @ourAdapter.define(SchemaMigration::tableName, SchemaMigration::attributes, done)
+      @AdapterWrapper.define(SchemaMigration::tableName, SchemaMigration::attributes, done)
     )
 
   describe 'db:migrate', ->
@@ -65,7 +65,7 @@ describe 'migration', ->
       copyFixturesToMigrationsPath(tableName)
       Migrator.migrate(@adapter, migrationsPath, null, (err)=>
         return done(err) if err
-        @ourAdapter.describe(tableName, (err, definition)->
+        @AdapterWrapper.describe(tableName, (err, definition)->
           return done(err) if err
           assert.equal(_.keys(definition).length, 3)
           done()
@@ -77,7 +77,7 @@ describe 'migration', ->
       copyFixturesToMigrationsPath(tableName)
       Migrator.migrate(@adapter, migrationsPath, null, (err)=>
         return done(err) if err
-        @ourAdapter.describe(tableName, (err, definition)->
+        @AdapterWrapper.describe(tableName, (err, definition)->
           return done(err) if err
           assert.equal(_.keys(definition).length, 4)
           done()

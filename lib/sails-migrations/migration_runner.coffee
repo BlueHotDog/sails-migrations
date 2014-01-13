@@ -1,9 +1,3 @@
-migrationHelper = require('./migration_path')
-_ = require('lodash')
-SchemaMigration = require('./schema_migration')
-MigrationPath = require('./migration_path')
-Adapter = require('./adapter')
-
 class MigrationRunner
   constructor: (@migrationData)->
 

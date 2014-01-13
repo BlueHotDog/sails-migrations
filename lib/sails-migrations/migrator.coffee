@@ -2,7 +2,7 @@ sets = require('simplesets')
 SchemaMigration = require('./schema_migration')
 MigrationPath = require('./migration_path')
 MigrationRunner = require('./migration_runner')
-OurAdapter = require('./adapter')
+AdapterWrapper = require('./adapter_wrapper')
 _ = require('lodash')
 Promise = require('bluebird')
 
@@ -98,7 +98,7 @@ migrator = self.new(direction, migrations(migrations_paths))
     )
 
   executeMigrationInTransaction: (migration, direction, cb)->
-    ourAdapter = new OurAdapter(@adapter)
+    ourAdapter = new AdapterWrapper(@adapter)
     migration.migrate(ourAdapter, direction, (err)=>
       return cb(err) if err
       @recordVersionStateAfterMigrating(migration.version()).then(cb)

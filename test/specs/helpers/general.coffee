@@ -1,33 +1,30 @@
 path = require('path')
 Promise = require('bluebird')
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
-OurAdapter = rek("lib/sails-migrations/adapter.coffee")
+AdapterWrapper = rek("lib/sails-migrations/adapter_wrapper.coffee")
 SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 
 class General
   @modulesPath: path.resolve("test/example_app/node_modules")
 
-  @getOurAdapter: ->
+  @getAdapter: ->
     resolver = Promise.defer()
     SailsIntegration.loadSailsConfig(@modulesPath, (err, config)=>
-      adapter = config.defaultAdapter
-      ourAdapter = new OurAdapter(adapter)
-      resolver.resolve(ourAdapter)
+      resolver.resolve(config.defaultAdapter)
     )
     resolver.promise
 
-  @recreateTable: (tableName, attributes)->
-    resolver = Promise.defer()
-    @getOurAdapter().then((adapter)->
-      adapter.drop(tableName, (err) ->
-        return resolver.reject(err) if err
-        adapter.define(tableName, attributes, resolver.callback)
-      )
-    )
-    resolver.promise
+  @getOurAdapter: ->
+    @getAdapter().then((adapter)-> new AdapterWrapper(adapter))
 
   @recreateSchemaTable: ->
-    @recreateTable(SchemaMigration::tableName, SchemaMigration::attributes)
+    @getAdapter().then((adapter)->
+      resolver = Promise.defer()
+      SchemaMigration.drop(adapter, ->
+        SchemaMigration.define(adapter, resolver.callback)
+      )
+      resolver.promise
+    )
 
 
-module.exports = General;
+module.exports = General

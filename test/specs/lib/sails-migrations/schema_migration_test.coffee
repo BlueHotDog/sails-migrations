@@ -1,14 +1,16 @@
-assert = require('assert')
 GeneralHelper = require('../../helpers/general')
 SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 
+before (done)->
+  console.log("running before hook")
+  GeneralHelper.recreateSchemaTable().then(GeneralHelper.getOurAdapter.bind(GeneralHelper)).then((@ourAdapter)=>
+    @adapter = @ourAdapter.adapter
+    done()
+  )
+
 describe 'SchemaMigration', ->
 
-  before (done)->
-    GeneralHelper.recreateSchemaTable().then(GeneralHelper.getOurAdapter).then((@ourAdapter)=>
-      @adapter = @ourAdapter.adapter
-      done()
-    )
+
 
 #  beforeEach (done)->
 #    @version = 1
@@ -17,7 +19,7 @@ describe 'SchemaMigration', ->
 #      @SchemaMigration = Model
 #      Model.create({version: @version}).exec(done)
 #    )
-
+#
 #  describe 'deleteAllByVersion', ->
 #
 #    it 'should be able to delete by version', (done)->
@@ -44,7 +46,6 @@ describe 'SchemaMigration', ->
     it 'should be able to create a version with attributes', (done)->
       versionSample = '123'
       SchemaMigration.create(@adapter, {version: versionSample}, (err, model)=>
-        console.log("aaaaaaaaaaaaaaaa")
         return done(err) if err
         assert.equal(model.version, versionSample)
         done()
