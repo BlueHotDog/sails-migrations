@@ -27,7 +27,8 @@ class SchemaMigration extends Waterline.Collection
   @create: (adapter, attributes, cb)->
     @getInstance(adapter, (err, Model)->
       return cb(err) if err
-      Model.create(attributes, cb)
+      console.log(Model, attributes)
+      Model.create(attributes).exec(cb)
     )
 
   @define: (adapter, cb)->

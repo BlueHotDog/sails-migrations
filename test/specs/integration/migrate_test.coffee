@@ -31,25 +31,32 @@ copyFixturesToMigrationsPath = (scope)->
   copy(migrationFixtures, migrationsPath)
 
 describe 'migration', ->
-  beforeEach (done)->
+  before (done)->
     modulesPath = path.resolve("test/example_app/node_modules")
     SailsIntegration.loadSailsConfig(modulesPath, (err, config)=>
       @config = config
       @adapter = @config.defaultAdapter
       @ourAdapter = new ourAdapter(@adapter)
-      cleanupMigrationFiles(migrationsPath)
-      done()
+
+      DatabaseTasks.drop(@adapter, (err)=>
+#        console.log("err", err)
+        DatabaseTasks.create(@adapter, (err)=>
+#          console.log("err2", err)
+          done(err)
+        )
+      )
     )
 
-  beforeEach (done)->
-    DatabaseTasks.drop(@adapter, (err)=>
-      DatabaseTasks.create(@adapter, done)
-    )
+  # loading sails and reset the migrations folder
+  beforeEach ->
+    cleanupMigrationFiles(migrationsPath)
 
+
+  # create the schem migrations folder
   beforeEach (done)->
-    SchemaMigration.getInstance(@adapter, (err, Model)=>
+    @ourAdapter.drop(SchemaMigration::tableName, (err)=>
       return done(err) if err
-      Model.define(@adapter, done)
+      @ourAdapter.define(SchemaMigration::tableName, SchemaMigration::attributes, done)
     )
 
   describe 'db:migrate', ->
@@ -76,9 +83,6 @@ describe 'migration', ->
           done()
         )
       )
-
-    afterEach (done)->
-      @ourAdapter.drop(SchemaMigration::tableName, done)
 
   describe 'db:rollback', ->
     it 'should rollback one migration', (done)->

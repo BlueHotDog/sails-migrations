@@ -10,9 +10,7 @@ definition = {
 }
 
 exports.up = function(adapter, done) {
-  adapter.define('one_migration', definition, function(err, schema){
-    done(err);
-  });
+  adapter.define('one_migration', definition, done);
 };
 
 exports.down = function(adapter, done) { 

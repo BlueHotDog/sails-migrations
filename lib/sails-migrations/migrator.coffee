@@ -2,7 +2,7 @@ sets = require('simplesets')
 SchemaMigration = require('./schema_migration')
 MigrationPath = require('./migration_path')
 MigrationRunner = require('./migration_runner')
-ourAdapter = require('./adapter')
+OurAdapter = require('./adapter')
 _ = require('lodash')
 Promise = require('bluebird')
 
@@ -98,24 +98,29 @@ migrator = self.new(direction, migrations(migrations_paths))
     )
 
   executeMigrationInTransaction: (migration, direction, cb)->
-    @ddlTransaction(migration, =>
-      migration.migrate(new ourAdapter(@adapter), direction, (err)=>
-        @recordVersionStateAfterMigrating(migration.version())
-        cb(err)
-      )
+    ourAdapter = new OurAdapter(@adapter)
+    migration.migrate(ourAdapter, direction, (err)=>
+      return cb(err) if err
+      @recordVersionStateAfterMigrating(migration.version()).then(cb)
     )
 
   recordVersionStateAfterMigrating: (version)->
+    resolver = Promise.defer()
     if @isDown()
       @migrated.remove(version)
-      Promise.promisify(SchemaMigration.deleteAllByVersion(@adapter, version))
+      Promise.promisify(SchemaMigration.deleteAllByVersion.bind(SchemaMigration))(@adapter, version)
     else
       @migrated.add(version)
-      Promise.promisify(SchemaMigration.create(@adapter, { version: version }))
-
-  ddlTransaction: (migration, block)->
-    #TODO: figure out how to use transactions
-    block()
+      console.log("aaaaaaaaaa")
+      SchemaMigration.create(@adapter, { version: version }, =>
+        console.log("argussssssssss", arguments)
+        resolver.resolve(value);
+      )
+      resolver.promise;
+#      create = Promise.promisify(SchemaMigration.create.bind(SchemaMigration))
+#      create(@adapter, { version: version }).then(()->
+#        console.log("argus", arguments)
+#      )
 
   migrations: ->
     clone = _.clone(@_migrations)
