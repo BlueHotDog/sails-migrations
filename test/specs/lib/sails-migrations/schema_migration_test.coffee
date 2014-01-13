@@ -44,6 +44,7 @@ describe 'SchemaMigration', ->
     it 'should be able to create a version with attributes', (done)->
       versionSample = '123'
       SchemaMigration.create(@adapter, {version: versionSample}, (err, model)=>
+        console.log("aaaaaaaaaaaaaaaa")
         return done(err) if err
         assert.equal(model.version, versionSample)
         done()

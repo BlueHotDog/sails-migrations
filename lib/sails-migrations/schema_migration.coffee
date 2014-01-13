@@ -22,13 +22,19 @@ class SchemaMigration extends Waterline.Collection
     options = {adapters:{}}
     options.adapters["adapter"] = adapter
     SchemaMigration::adapter = "adapter"
-    new @(options, cb)
+    new SchemaMigration(options, cb)
 
   @create: (adapter, attributes, cb)->
     @getInstance(adapter, (err, Model)->
       return cb(err) if err
-      console.log(Model, attributes)
-      Model.create(attributes).exec(cb)
+      console.log(Model.create.toString())
+      Model.create(attributes,()->
+        console.log("bbbbbbbbbbcccccccccc", arguments)
+        cb()
+      ).exec(->
+        console.log("bbbbbbbbbbcccccccccc", arguments)
+        cb()
+      )
     )
 
   @define: (adapter, cb)->
