@@ -18,4 +18,4 @@ rmdirpSync = (dir) ->
       fs.unlinkSync(filename)
   fs.rmdirSync(dir)
  
-module.exports = rmdirpSync
+exports.sync = rmdirpSync

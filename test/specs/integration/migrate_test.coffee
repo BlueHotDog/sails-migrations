@@ -5,7 +5,7 @@ sinon = require('sinon')
 path = require('path')
 assert = require('assert')
 mkdirp = require('mkdirp')
-rmdirpSync = rek('lib/rmdirpSync.coffee')
+rmdirp = require('../helpers/rmdirp.coffee')
 
 MigrationPath = rek('lib/sails-migrations/migration_path.coffee')
 DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
@@ -17,7 +17,7 @@ migrationsPath = path.resolve('test/example_app/db/migrations')
 definitionsPath = path.resolve('test/example_app/db/migrations/definitions')
 
 cleanupMigrationFiles = (migrationsPath)->
-  rmdirpSync(migrationsPath)
+  rmdirp.sync(migrationsPath)
 
 copy = (files, outputPath)->
   _.each(files, (file)->
