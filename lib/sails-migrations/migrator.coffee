@@ -34,8 +34,11 @@ class Migrator
           @move('up', migrationsPaths, targetVersion, cb)
       )
 
-  @rollback: (adapter, migrationsPaths, targetVersion, cb)-> 
-    
+  @rollback: (adapter, migrationsPaths, steps, cb)->
+    @calculateTargetVersion(adapter, migrationsPaths, steps).then((version)=>
+      console.log(version)
+#      @migrate(adapter, migrationsPaths, version, cb)
+    ).catch(cb)
 
   @move: (direction, adapter, migrationsPaths, targetVersion, cb)->
     MigrationPath.allMigrationFilesParsed(migrationsPaths, (err, migrations)->
@@ -51,6 +54,23 @@ class Migrator
       maxVersion = _.max(versions) || 0
       cb(null, maxVersion)
     )
+
+  @calculateTargetVersion: (adapter, migrationsPaths, steps)->
+    allMigrationFilesPromise = Promise.Promisify(MigrationPath.allMigrationFilesParsed)(allMigrationFiles)
+    currentVersionPromise = Promise.Promisify(@currentVersion)()
+    Promise.settle([allMigrationFilesPromise, currentVersionPromise]).then((res)->
+      console.log(res)
+    )
+    ###
+migrator = self.new(direction, migrations(migrations_paths))
+        start_index = migrator.migrations.index(migrator.current_migration)
+
+        if start_index
+          finish = migrator.migrations[start_index + steps]
+          version = finish ? finish.version : 0
+          send(direction, migrations_paths, version)
+        end
+###
 
   migrate: (cb)->
     if !@target() && @targetVersion && @targetVersion > 0

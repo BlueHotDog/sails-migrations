@@ -81,4 +81,6 @@ describe 'migration', ->
       @ourAdapter.drop(SchemaMigration::tableName, done)
 
   describe 'db:rollback', ->
+    it 'should rollback one migration', (done)->
+      Migrator.rollback
 

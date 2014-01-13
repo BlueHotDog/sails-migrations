@@ -33,9 +33,11 @@
     "lodash": "~2.4",
     "bluebird": "~0.11",
     "glob": "~3.2",
-    "dot": "~1.0.2",
+    "dot": "~1.0",
     "moment": "~2.5",
-    "underscore.string": "~2.3.3"
+    "underscore.string": "~2.3",
+    "mkdirp": "~0.3",
+    "simplesets": "~1.2"
   },
   "devDependencies": {
     "mocha": "~1.16.2",
