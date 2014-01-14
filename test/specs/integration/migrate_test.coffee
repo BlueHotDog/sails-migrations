@@ -75,6 +75,14 @@ describe 'migration', ->
         CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 4, done)
       )
 
+    it 'should be able to run many migrations', (done)->
+      @tableName = 'many_migrations'
+      migrateScope(@adapter, migrationsPath, @tableName, (err, versions)=>
+        return done(err) if err
+        assert.equal(versions.length, 5)
+        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+      )
+
   describe 'db:rollback', ->
     it 'should rollback one migration', (done)->
       @tableName = 'one_migration'
@@ -90,4 +98,12 @@ describe 'migration', ->
         return done(err) if err
         assert.equal(versions.length, 1)
         CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+      )
+
+    it 'should rollback once with many migrations', (done)->
+      @tableName = 'many_migrations'
+      rollbackScope(@adapter, migrationsPath, @tableName, (err, versions)=>
+        return done(err) if err
+        assert.equal(versions.length, 4)
+        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 2, done)
       )
