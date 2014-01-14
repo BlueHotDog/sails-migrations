@@ -77,3 +77,10 @@ describe 'migration', ->
         return done(err) if err
         CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 0, done)
       )
+
+    it 'should rollback two migrations', (done)->
+      @tableName = 'two_migrations'
+      rollbackScope(@adapter, migrationsPath, @tableName, (err)=>
+        return done(err) if err
+        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+      )

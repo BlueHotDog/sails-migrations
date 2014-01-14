@@ -37,47 +37,48 @@ class Migrator
 
   @rollback: (adapter, migrationsPaths, steps, cb)->
     steps = 1 unless steps
-    @calculateTargetVersion(adapter, migrationsPaths, steps).then((targetVersion)=>
-      console.log 'targetVersion\t', targetVersion
-      @move('down', adapter, migrationsPaths, targetVersion, cb)
+    direction = 'down'
+    @calculateTargetVersion(adapter, direction, migrationsPaths, steps).then((targetVersion)=>
+      @move(direction, adapter, migrationsPaths, targetVersion, cb)
     ).catch(cb)
 
   @move: (direction, adapter, migrationsPaths, targetVersion, cb)->
-    MigrationPath.allMigrationFilesParsed(migrationsPaths, (err, migrations)->
+    @migrations(migrationsPaths, (err, migrations)=>
       return cb(err) if err
 
-      migrationsRunners = _.map(migrations, (migration)-> new MigrationRunner(migration))
       SchemaMigration.getAllVersions(adapter, (err, versions)=>
         return cb(err) if err
 
-        migrator = new Migrator(adapter, direction, migrationsRunners, versions, targetVersion)
+        migrator = new Migrator(adapter, direction, migrations, versions, targetVersion)
         migrator.migrate(cb)
       )
     )
 
-  @currentVersion: (adapter, cb)->
-    SchemaMigration.getAllVersions(adapter, (err, versions)=>
+  @migrations: (migrationsPaths, cb)->
+    MigrationPath.allMigrationFilesParsed(migrationsPaths, (err, migrations)->
       return cb(err) if err
-      if _.isEmpty(versions)
-        maxVersion = 0
-      else
-        maxVersion = _.max(versions)
-      cb(null, maxVersion)
+
+      migrationsRunners = _.map(migrations, (migration)-> new MigrationRunner(migration))
+      migrationsRunners = _.sortBy(migrationsRunners, (m)-> m.version())
+      cb(null, migrationsRunners)
     )
 
-  @calculateTargetVersion: (adapter, migrationsPaths, steps)->
-    allMigrationFilesPromise = Promise.promisify(MigrationPath.allMigrationFilesParsed.bind(MigrationPath))(migrationsPaths)
-    currentVersionPromise = Promise.promisify(@currentVersion)(adapter)
-    Promise.settle([allMigrationFilesPromise, currentVersionPromise]).then((res)->
-      resolver = Promise.defer()
-      if _.all(res, (r)-> r.isFulfilled())
-        #The target version is in the second promise of the resolved promises
-        targetVersion = res[1].value()
-        resolver.resolve(targetVersion)
-      else
-        resolver.reject()
-      resolver.promise
+  @calculateTargetVersion: (adapter, direction, migrationsPaths, steps)->
+    resolver = Promise.defer()
+    @migrations(migrationsPaths, (err, migrations)=>
+      return resolver(reject) if err
+
+      dummyMigrator = new Migrator(adapter, direction, migrations)
+
+      targetVersion = null
+      startIndex = dummyMigrator.start()
+      if startIndex
+        finish = dummyMigrator.getMigrationByIndex(startIndex + steps)
+        targetVersion = if finish then finish.version() else 0
+
+      resolver.resolve(targetVersion)
     )
+    resolver.promise
     ###
 migrator = self.new(direction, migrations(migrations_paths))
         start_index = migrator.migrations.index(migrator.current_migration)
@@ -99,8 +100,24 @@ migrator = self.new(direction, migrations(migrations_paths))
   currentMigration: ->
     _.detect(@migrations(), (migration)=> migration.version() == @currentVersion())
 
+  currentMigrationIndex: ->
+    index = _.indexOf(@migrations(), @currentMigration())
+    if index > -1 then index else undefined
+
+  targetMigration: ->
+    _.detect(@migrations(), (migration)=> migration.version() == @targetVersion)
+
+  getMigrationByIndex: (index)->
+    migrations = @migrations()
+    i = _.indexOf(migrations, index)
+    migrations[i]
+
+  targetMigrationIndex: ->
+    index = _.indexOf(@migrations(), @targetMigration())
+    if index > -1 then index else undefined
+
   migrate: (cb)->
-    if !@target() && @targetVersion && @targetVersion > 0
+    if !@targetMigration() && @targetVersion && @targetVersion > 0
       return cb("Unknown migration version error #{@targetVersion}")
 
     executeMigrationInTransaction = Promise.promisify(@executeMigrationInTransaction.bind(@))
@@ -146,7 +163,7 @@ migrator = self.new(direction, migrations(migrations_paths))
 
   migrations: ->
     clone = _.clone(@_migrations)
-    if @isDown() then clone.reverse() else clone
+    if @isDown() then clone.reverse() else clone #for some reason in rails they sort it by version here, even though it already should come sorted..
       
   runnable: ->
     runnable = _(@migrations()[@start()..@finish()])
@@ -154,14 +171,14 @@ migrator = self.new(direction, migrations(migrations_paths))
       runnable.reject(@ran.bind(@)).value()
     else
       # skip the last migration if we're headed down, but not ALL the way down
-      runnable.pop if target
+      runnable.pop if @targetMigration()
       runnable.filter(@ran.bind(@)).value()
 
   start: ->
-    0
+    if @isUp() then 0 else (@currentMigrationIndex() || 0)
 
   finish: ->
-    @migrations().length-1
+    @targetMigrationIndex() || @migrations.length - 1
     
   isUp: ->
     @direction == 'up'
@@ -171,8 +188,5 @@ migrator = self.new(direction, migrations(migrations_paths))
 
   ran: (migration)->
     _.contains(@migrated, migration.version())
-
-  target: ->
-    _.detect(@migrations(), (migration)=> migration.version() == @targetVersion)
 
 module.exports = Migrator
