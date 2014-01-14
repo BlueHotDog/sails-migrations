@@ -72,9 +72,9 @@ class Migrator
 
       targetVersion = null
       startIndex = dummyMigrator.start()
-      if startIndex
+      if startIndex?
         finish = dummyMigrator.getMigrationByIndex(startIndex + steps)
-        targetVersion = if finish then finish.version() else 0
+        targetVersion = if finish? then finish.version() else 0
 
       resolver.resolve(targetVersion)
     )
@@ -107,14 +107,12 @@ migrator = self.new(direction, migrations(migrations_paths))
   targetMigration: ->
     _.detect(@migrations(), (migration)=> migration.version() == @targetVersion)
 
-  getMigrationByIndex: (index)->
-    migrations = @migrations()
-    i = _.indexOf(migrations, index)
-    migrations[i]
-
   targetMigrationIndex: ->
     index = _.indexOf(@migrations(), @targetMigration())
     if index > -1 then index else undefined
+
+  getMigrationByIndex: (index)->
+    @migrations()[index]
 
   migrate: (cb)->
     if !@targetMigration() && @targetVersion && @targetVersion > 0
@@ -166,7 +164,12 @@ migrator = self.new(direction, migrations(migrations_paths))
     if @isDown() then clone.reverse() else clone #for some reason in rails they sort it by version here, even though it already should come sorted..
       
   runnable: ->
-    runnable = _(@migrations()[@start()..@finish()])
+    start = @start()
+    finish = @finish() + 1
+    runnable = @migrations().slice(start, finish)
+    console.log 'start', start, 'finish', finish
+    console.log 'runnable count', _.size(runnable), @direction, @targetVersion, @migrations()
+    runnable = _(runnable)
     if @isUp
       runnable.reject(@ran.bind(@)).value()
     else
@@ -178,7 +181,10 @@ migrator = self.new(direction, migrations(migrations_paths))
     if @isUp() then 0 else (@currentMigrationIndex() || 0)
 
   finish: ->
-    @targetMigrationIndex() || @migrations.length - 1
+    if @targetMigrationIndex()
+      @targetMigrationIndex() - 1
+    else
+      (@migrations().length - 1)
     
   isUp: ->
     @direction == 'up'
