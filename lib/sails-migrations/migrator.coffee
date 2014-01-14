@@ -21,6 +21,7 @@ class Migrator
     #version ,= migrations.group_by(&:version).find { |_,v| v.length > 1 }
     #raise DuplicateMigrationVersionError.new(version) if version
 
+
   @migrate: (adapter, migrationsPaths, targetVersion, cb)-> 
     if !targetVersion
       @move('up', adapter, migrationsPaths, targetVersion, cb)

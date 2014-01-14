@@ -40,9 +40,9 @@
     "simplesets": "~1.2"
   },
   "devDependencies": {
-    "mocha": "~1.16.2",
-    "should": "~2.1.1",
-    "sinon": "~1.7.3",
-    "chai": "~1.8.1"
+    "mocha": "~1.16",
+    "should": "~2.1",
+    "sinon": "~1.7",
+    "chai": "~1.8"
   }
 }
