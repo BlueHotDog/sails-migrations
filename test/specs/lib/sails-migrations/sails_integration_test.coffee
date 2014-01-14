@@ -1,4 +1,5 @@
-SailsIntegration = rek('lib/sails-migrations/sails_integration')
+# We're forcing module.require to reload the file here to prevent cached state from previous tests.
+SailsIntegration = rek('lib/sails-migrations/sails_integration.coffee', true) 
 path = require('path')
 
 describe 'SailsIntegration', ->
