@@ -8,8 +8,9 @@ Promise = require('bluebird')
 
 #This is a replica of https://github.com/rails/docrails/blob/master/activerecord/lib/active_record/migration.rb#L764
 class Migrator
-  constructor: (@adapter, @direction, @_migrations, @targetVersion=null)->
+  constructor: (@adapter, @direction, @_migrations, @versions, @targetVersion=null)->
     #TODO: Make sure the adapter supports migrations
+    @migrated = new sets.Set(@versions)
     @validate(@_migrations)
     
   validate: (migrations)->
@@ -37,22 +38,28 @@ class Migrator
   @rollback: (adapter, migrationsPaths, steps, cb)->
     steps = 1 unless steps
     @calculateTargetVersion(adapter, migrationsPaths, steps).then((targetVersion)=>
+      console.log 'targetVersion\t', targetVersion
       @move('down', adapter, migrationsPaths, targetVersion, cb)
     ).catch(cb)
 
   @move: (direction, adapter, migrationsPaths, targetVersion, cb)->
     MigrationPath.allMigrationFilesParsed(migrationsPaths, (err, migrations)->
       return cb(err) if err
-      migrations_runners = _.map(migrations, (migration)-> new MigrationRunner(migration))
-      migrator = new Migrator(adapter, direction, migrations_runners, targetVersion)
-      migrator.migrate(cb)
+
+      migrationsRunners = _.map(migrations, (migration)-> new MigrationRunner(migration))
+      SchemaMigration.getAllVersions(adapter, (err, versions)=>
+        return cb(err) if err
+
+        migrator = new Migrator(adapter, direction, migrationsRunners, versions, targetVersion)
+        migrator.migrate(cb)
+      )
     )
 
   @currentVersion: (adapter, cb)->
     SchemaMigration.getAllVersions(adapter, (err, versions)=>
       return cb(err) if err
       if _.isEmpty(versions)
-        maxVersion = null
+        maxVersion = 0
       else
         maxVersion = _.max(versions)
       cb(null, maxVersion)
@@ -82,29 +89,37 @@ migrator = self.new(direction, migrations(migrations_paths))
         end
 ###
 
+  currentVersion: ->
+    migratedSetAsArray = @migrated.array()
+    if _.isEmpty(migratedSetAsArray)
+      0
+    else
+      _.max(migratedSetAsArray)
+
+  currentMigration: ->
+    _.detect(@migrations(), (migration)=> migration.version() == @currentVersion())
+
   migrate: (cb)->
     if !@target() && @targetVersion && @targetVersion > 0
-      return cb("Unknown migration version error #{targetVersion}")
+      return cb("Unknown migration version error #{@targetVersion}")
 
     executeMigrationInTransaction = Promise.promisify(@executeMigrationInTransaction.bind(@))
 
-    SchemaMigration.getAllVersions(@adapter, (err, versions)=>
-      return cb(err) if err
-      @migrated = new sets.Set(versions)
-      promises = _.map(@runnable(), (migration)=>
-        #TODO: Figure out how to do logging properly
-        #console.log "Migrating to #{migration.name()} (#{migration.version()})"
-        executeMigrationInTransaction(migration, @direction)
-        #rescue => e
-        #canceled_msg = use_transaction?(migration) ? "this and " : ""
-        #raise StandardError, "An error has occurred, #{canceled_msg}all later migrations canceled:\n\n#{e}", e.backtrace
-        #end
-      )
+    promises = _.map(@runnable(), (migration)=>
+      #TODO: Figure out how to do logging properly
+      #console.log "Migrating to #{migration.name()} (#{migration.version()})"
+      
+      executeMigrationInTransaction(migration, @direction)
 
-      #TODO: We need to resolve the errors properly
-      Promise.all(promises).then( (errors)->
-        cb(null)
-      )
+      #rescue => e
+      #canceled_msg = use_transaction?(migration) ? "this and " : ""
+      #raise StandardError, "An error has occurred, #{canceled_msg}all later migrations canceled:\n\n#{e}", e.backtrace
+      #end
+    )
+
+    #TODO: We need to resolve the errors properly
+    Promise.all(promises).then( (errors)->
+      cb()
     )
 
   executeMigrationInTransaction: (migration, direction, cb)->

@@ -14,5 +14,5 @@ exports.up = function(adapter, done) {
 };
 
 exports.down = function(adapter, done) { 
-  done();
+  adapter.drop('one_migration', done);
 };
