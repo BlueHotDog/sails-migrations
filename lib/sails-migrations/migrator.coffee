@@ -27,14 +27,15 @@ class Migrator
     if !targetVersion
       @move('up', adapter, migrationsPaths, targetVersion, cb)
     else 
-      @currentVersion( (err, currentVersion)=>
+      @currentVersion(adapter, (err, currentVersion)=>
         return cb(err) if err
+
         if currentVersion == 0 && targetVersion == 0
           cb(null, [])
         else if currentVersion > targetVersion
           @move('down', adapter, migrationsPaths, targetVersion, cb)
         else
-          @move('up', migrationsPaths, targetVersion, cb)
+          @move('up', adapter, migrationsPaths, targetVersion, cb)
       )
 
   @rollback: (adapter, migrationsPaths, steps, cb)->
@@ -43,6 +44,17 @@ class Migrator
     @calculateTargetVersion(adapter, direction, migrationsPaths, steps).then((targetVersion)=>
       @move(direction, adapter, migrationsPaths, targetVersion, cb)
     ).catch(cb)
+
+  @currentVersion: (adapter, cb)->
+    SchemaMigration.getAllVersions(adapter, (err, versions)=>
+      return cb(err) if err
+
+      if _.isEmpty(versions)
+        currentVersion = 0
+      else
+        currentVersion = _.max(versions)
+      cb(null, currentVersion)
+    )
 
   @move: (direction, adapter, migrationsPaths, targetVersion, cb)->
     @migrations(migrationsPaths, (err, migrations)=>
@@ -160,6 +172,8 @@ class Migrator
     start = @start()
     finish = @finish()
     migrations = @migrations()
+    if finish - start > 1
+      finish += 1
     runnable = migrations.slice(start, finish)
     runnable = _(runnable)
     if @isUp

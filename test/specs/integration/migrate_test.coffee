@@ -25,22 +25,31 @@ copyFixturesToMigrationsPath = (scope)->
   copy(migrationFixtures, migrationsPath)
 
 # Runs migration on the migration files that include provided name (scope)
-migrateScope = (adapter, migrationsPath, scope, cb)->
+migrateScope = (adapter, migrationsPath, scope, targetVersion, cb)->
   copyFixturesToMigrationsPath(scope)
-  Migrator.migrate(adapter, migrationsPath, null, (err)=>
+  Migrator.migrate(adapter, migrationsPath, targetVersion, (err)=>
     return cb(err) if err
     SchemaMigration.getAllVersions(adapter, cb)
   )
 
+# Runs all the migrations as the default behavior is without a targetVersion
+migrateScopeDefault = (adapter, migrationsPath, scope, cb)->
+  migrateScope(adapter, migrationsPath, scope, null, cb)
+
 # Runs rollback on the migration files that include provided name (scope)
-rollbackScope = (adapter, migrationsPath, scope, cb)->
-  migrateScope(adapter, migrationsPath, scope, (err)=>
+rollbackScope = (adapter, migrationsPath, scope, steps, cb)->
+  migrateScopeDefault(adapter, migrationsPath, scope, (err)=>
     return cb(err) if err
-    Migrator.rollback(adapter, migrationsPath, null, (err)=>
+    Migrator.rollback(adapter, migrationsPath, steps, (err)=>
       return cb(err) if err
       SchemaMigration.getAllVersions(adapter, cb)
     )
   )
+
+# Runs rollback with the default behavior which is when given no steps (null) then the migrator
+# will rollback to the previous version
+rollbackScopeDefault = (adapter, migrationsPath, scope, cb)->
+  rollbackScope(adapter, migrationsPath, scope, null, cb)
 
 describe 'migration', ->
   # reset the migrations folder
@@ -59,51 +68,63 @@ describe 'migration', ->
     GeneralHelper.recreateSchemaTable().done(->done())
 
   describe 'db:migrate', ->
-    it 'should be able to run a migration', (done)->
-      @tableName = 'one_migration'
-      migrateScope(@adapter, migrationsPath, @tableName, (err, versions)=>
-        return done(err) if err
-        assert.equal(versions.length, 1)
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
-      )
+    context 'default behavior', ->
+      it 'should be able to run a migration', (done)->
+        @tableName = 'one_migration'
+        migrateScopeDefault(@adapter, migrationsPath, @tableName, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 1)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+        )
 
-    it 'should be able to run 2 migrations', (done)->
-      @tableName = 'two_migrations'
-      migrateScope(@adapter, migrationsPath, @tableName, (err, versions)=>
-        return done(err) if err
-        assert.equal(versions.length, 2)
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 4, done)
-      )
+      it 'should be able to run 2 migrations', (done)->
+        @tableName = 'two_migrations'
+        migrateScopeDefault(@adapter, migrationsPath, @tableName, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 2)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 4, done)
+        )
 
-    it 'should be able to run many migrations', (done)->
-      @tableName = 'many_migrations'
-      migrateScope(@adapter, migrationsPath, @tableName, (err, versions)=>
-        return done(err) if err
-        assert.equal(versions.length, 5)
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
-      )
+      it 'should be able to run many migrations', (done)->
+        @tableName = 'many_migrations'
+        migrateScopeDefault(@adapter, migrationsPath, @tableName, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 5)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+        )
+
+    context 'when a valid targetVersion is given', ->
+
+      it 'should be able to run migrations correctly', (done)->
+        @tableName = 'many_migrations'
+        migrateScope(@adapter, migrationsPath, @tableName, 20143, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 3)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+        )
 
   describe 'db:rollback', ->
-    it 'should rollback one migration', (done)->
-      @tableName = 'one_migration'
-      rollbackScope(@adapter, migrationsPath, @tableName, (err, versions)=>
-        return done(err) if err
-        assert.equal(versions.length, 0)
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 0, done)
-      )
+    context 'default behavior', ->
+      it 'should be able rollback one migration', (done)->
+        @tableName = 'one_migration'
+        rollbackScopeDefault(@adapter, migrationsPath, @tableName, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 0)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 0, done)
+        )
 
-    it 'should rollback once with two migrations', (done)->
-      @tableName = 'two_migrations'
-      rollbackScope(@adapter, migrationsPath, @tableName, (err, versions)=>
-        return done(err) if err
-        assert.equal(versions.length, 1)
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
-      )
+      it 'should be able to rollback once with two migrations', (done)->
+        @tableName = 'two_migrations'
+        rollbackScopeDefault(@adapter, migrationsPath, @tableName, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 1)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+        )
 
-    it 'should rollback once with many migrations', (done)->
-      @tableName = 'many_migrations'
-      rollbackScope(@adapter, migrationsPath, @tableName, (err, versions)=>
-        return done(err) if err
-        assert.equal(versions.length, 4)
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 2, done)
-      )
+      it 'should be able rollback once with many migrations', (done)->
+        @tableName = 'many_migrations'
+        rollbackScopeDefault(@adapter, migrationsPath, @tableName, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 4)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 2, done)
+        )
