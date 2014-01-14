@@ -90,7 +90,7 @@ class Migrator
       _.max(migratedSetAsArray)
 
   currentMigration: ->
-    _.detect(@migrations(), (migration)=> migration.version() == @currentVersion())
+    _.detect(@migrations(), (migration)=> parseInt(migration.version()) == parseInt(@currentVersion()))
 
   currentMigrationIndex: ->
     index = _.indexOf(@migrations(), @currentMigration())
@@ -158,8 +158,9 @@ class Migrator
       
   runnable: ->
     start = @start()
-    finish = @finish() + 1
-    runnable = @migrations().slice(start, finish)
+    finish = @finish()
+    migrations = @migrations()
+    runnable = migrations.slice(start, finish)
     runnable = _(runnable)
     if @isUp
       runnable.reject(@ran.bind(@)).value()
@@ -169,13 +170,21 @@ class Migrator
       runnable.filter(@ran.bind(@)).value()
 
   start: ->
-    if @isUp() then 0 else (@currentMigrationIndex() || 0)
+    if @isUp() 
+      0 
+    else 
+      index = @currentMigrationIndex()
+      if _.isNumber(index)
+        index
+      else
+        0
 
   finish: ->
-    if _.isNumber(@targetMigrationIndex())
-      @targetMigrationIndex() - 1
+    index = @targetMigrationIndex()
+    if _.isNumber(index)
+      index
     else
-      (@migrations().length - 1)
+      @migrations().length
     
   isUp: ->
     @direction == 'up'
