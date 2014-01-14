@@ -1,7 +1,5 @@
 fs = require('fs')
 glob = require('glob')
-_ = require('lodash')
-sinon = require('sinon')
 path = require('path')
 assert = require('assert')
 mkdirp = require('mkdirp')
@@ -9,7 +7,6 @@ rmdirp = require('../helpers/rmdirp.coffee')
 GeneralHelper = require("../helpers/general.coffee")
 
 MigrationPath = rek('lib/sails-migrations/migration_path.coffee')
-DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
 Migrator = rek("lib/sails-migrations/migrator.coffee")
 SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
@@ -33,21 +30,15 @@ copyFixturesToMigrationsPath = (scope)->
 
 describe 'migration', ->
   before (done)->
-    modulesPath = path.resolve("test/example_app/node_modules")
-    SailsIntegration.loadSailsConfig(modulesPath, (err, config)=>
-      @config = config
-      @adapter = @config.defaultAdapter
-      @AdapterWrapper = new AdapterWrapper(@adapter)
-
-      DatabaseTasks.drop(@adapter, (err)=>
-        DatabaseTasks.create(@adapter, done)
-      )
+    GeneralHelper.recreateDatabase().done((adapter)=>
+      @adapter = adapter
+      @AdapterWrapper = new AdapterWrapper(adapter)
+      done()
     )
 
   # loading sails and reset the migrations folder
   beforeEach ->
     cleanupMigrationFiles(migrationsPath)
-
 
   # create the schem migrations folder
   beforeEach (done)->

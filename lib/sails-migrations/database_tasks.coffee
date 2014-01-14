@@ -11,7 +11,7 @@ class DatabaseTasks
     switch adapter.identity
       when 'sails-mysql'
         @executeQuery(adapter, "CREATE DATABASE #{adapter.config.database}", (err, stdout, stdin)->
-          return cb(err)
+          return cb(err, adapter)
         )
 
   @migrationsPath: ->
@@ -22,7 +22,7 @@ class DatabaseTasks
     switch adapter.identity
       when 'sails-mysql'
         @executeQuery(adapter, "DROP DATABASE #{adapter.config.database}", (err, stdout, stdin)->
-          return cb(err)
+          return cb(err, adapter)
         )
 
 
