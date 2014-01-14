@@ -37,7 +37,8 @@
     "moment": "~2.5",
     "underscore.string": "~2.3",
     "mkdirp": "~0.3",
-    "simplesets": "~1.2"
+    "simplesets": "~1.2",
+    "async": "~0.2"
   },
   "devDependencies": {
     "mocha": "~1.16",

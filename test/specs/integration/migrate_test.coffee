@@ -43,17 +43,16 @@ rollbackScope = (adapter, migrationsPath, scope, cb)->
   )
 
 describe 'migration', ->
-  # reset the database #TODO: move this to a pretest task?
-  before (done)->
+  # reset the migrations folder
+  beforeEach ->
+    rmdirp.sync(migrationsPath)
+
+  beforeEach (done)->
     GeneralHelper.recreateDatabase().done((adapter)=>
       @adapter = adapter
       @AdapterWrapper = new AdapterWrapper(adapter)
       done()
     )
-
-  # reset the migrations folder
-  beforeEach ->
-    rmdirp.sync(migrationsPath)
 
   # create the schema migrations folder
   beforeEach (done)->
@@ -64,16 +63,16 @@ describe 'migration', ->
       @tableName = 'one_migration'
       migrateScope(@adapter, migrationsPath, @tableName, (err, versions)=>
         return done(err) if err
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
         assert.equal(versions.length, 1)
+        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
       )
 
     it 'should be able to run 2 migrations', (done)->
       @tableName = 'two_migrations'
       migrateScope(@adapter, migrationsPath, @tableName, (err, versions)=>
         return done(err) if err
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 4, done)
         assert.equal(versions.length, 2)
+        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 4, done)
       )
 
   describe 'db:rollback', ->
@@ -81,17 +80,14 @@ describe 'migration', ->
       @tableName = 'one_migration'
       rollbackScope(@adapter, migrationsPath, @tableName, (err, versions)=>
         return done(err) if err
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 0, done)
         assert.equal(versions.length, 0)
+        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 0, done)
       )
 
     it 'should rollback once with two migrations', (done)->
       @tableName = 'two_migrations'
       rollbackScope(@adapter, migrationsPath, @tableName, (err, versions)=>
         return done(err) if err
-        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
         assert.equal(versions.length, 1)
+        CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
       )
-
-  afterEach (done)->
-    @AdapterWrapper.drop(@tableName, done)

@@ -5,6 +5,7 @@ MigrationRunner = require('./migration_runner')
 AdapterWrapper = require('./adapter_wrapper')
 _ = require('lodash')
 Promise = require('bluebird')
+async = require('async')
 
 #This is a replica of https://github.com/rails/docrails/blob/master/activerecord/lib/active_record/migration.rb#L764
 class Migrator
@@ -80,16 +81,6 @@ class Migrator
       resolver.resolve(targetVersion)
     )
     resolver.promise
-    ###
-migrator = self.new(direction, migrations(migrations_paths))
-        start_index = migrator.migrations.index(migrator.current_migration)
-
-        if start_index
-          finish = migrator.migrations[start_index + steps]
-          version = finish ? finish.version : 0
-          send(direction, migrations_paths, version)
-        end
-###
 
   currentVersion: ->
     migratedSetAsArray = @migrated.array()
@@ -119,22 +110,22 @@ migrator = self.new(direction, migrations(migrations_paths))
     if !@targetMigration() && @targetVersion && @targetVersion > 0
       return cb("Unknown migration version error #{@targetVersion}")
 
-    executeMigrationInTransaction = Promise.promisify(@executeMigrationInTransaction.bind(@))
-
-    promises = _.map(@runnable(), (migration)=>
+    migrationsToRun = _.map(@runnable(), (migration)=>
       #TODO: Figure out how to do logging properly
       #console.log "Migrating to #{migration.name()} (#{migration.version()})"
       
-      executeMigrationInTransaction(migration, @direction)
+      (callback)=>
+        @executeMigrationInTransaction(migration, @direction, (err, version)=>
+          callback()
+        )
 
       #rescue => e
       #canceled_msg = use_transaction?(migration) ? "this and " : ""
       #raise StandardError, "An error has occurred, #{canceled_msg}all later migrations canceled:\n\n#{e}", e.backtrace
       #end
     )
-
-    #TODO: We need to resolve the errors properly
-    Promise.all(promises).then( (errors)->
+    async.waterfall(migrationsToRun, (err, result)=>
+      return cb(err) if err
       cb()
     )
 
