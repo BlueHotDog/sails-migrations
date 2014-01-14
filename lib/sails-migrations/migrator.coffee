@@ -167,8 +167,6 @@ migrator = self.new(direction, migrations(migrations_paths))
     start = @start()
     finish = @finish() + 1
     runnable = @migrations().slice(start, finish)
-    console.log 'start', start, 'finish', finish
-    console.log 'runnable count', _.size(runnable), @direction, @targetVersion, @migrations()
     runnable = _(runnable)
     if @isUp
       runnable.reject(@ran.bind(@)).value()
@@ -181,7 +179,7 @@ migrator = self.new(direction, migrations(migrations_paths))
     if @isUp() then 0 else (@currentMigrationIndex() || 0)
 
   finish: ->
-    if @targetMigrationIndex()
+    if _.isNumber(@targetMigrationIndex())
       @targetMigrationIndex() - 1
     else
       (@migrations().length - 1)
