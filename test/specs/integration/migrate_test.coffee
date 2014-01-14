@@ -13,9 +13,6 @@ SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
 AdapterWrapper = rek("lib/sails-migrations/adapter_wrapper.coffee")
 migrationsPath = path.resolve('test/example_app/db/migrations')
 
-cleanupMigrationFiles = (migrationsPath)->
-  rmdirp.sync(migrationsPath)
-
 copy = (files, outputPath)->
   _.each(files, (file)->
     p = "#{outputPath}/#{path.basename(file)}"
@@ -28,7 +25,19 @@ copyFixturesToMigrationsPath = (scope)->
   migrationFixtures = glob.sync("#{fixturePath}/*#{scope}*.js", {})
   copy(migrationFixtures, migrationsPath)
 
+migrateScope = (adapter, migrationsPath, scope, cb)->
+  copyFixturesToMigrationsPath(scope)
+  Migrator.migrate(adapter, migrationsPath, null, cb)
+
+assertTableColumnCount = (adapterWrapper, tableName, expectedColumns, cb)->
+  adapterWrapper.describe(tableName, (err, definition)->
+    return cb(err) if err
+    assert.equal(_.keys(definition).length, expectedColumns)
+    cb()
+  )
+
 describe 'migration', ->
+  # reset the database #TODO: move this to a pretest task?
   before (done)->
     GeneralHelper.recreateDatabase().done((adapter)=>
       @adapter = adapter
@@ -36,9 +45,9 @@ describe 'migration', ->
       done()
     )
 
-  # loading sails and reset the migrations folder
+  # reset the migrations folder
   beforeEach ->
-    cleanupMigrationFiles(migrationsPath)
+    rmdirp.sync(migrationsPath)
 
   # create the schem migrations folder
   beforeEach (done)->
@@ -47,30 +56,20 @@ describe 'migration', ->
   describe 'db:migrate', ->
     it 'should be able to run a migration', (done)->
       tableName = 'one_migration'
-      copyFixturesToMigrationsPath(tableName)
-      Migrator.migrate(@adapter, migrationsPath, null, (err)=>
+      migrateScope(@adapter, migrationsPath, tableName, (err)=>
         return done(err) if err
-        @AdapterWrapper.describe(tableName, (err, definition)->
-          return done(err) if err
-          assert.equal(_.keys(definition).length, 3)
-          done()
-        )
+        assertTableColumnCount(@AdapterWrapper, tableName, 3, done)
       )
 
     it 'should be able to run 2 migrations', (done)->
       tableName = 'two_migrations'
-      copyFixturesToMigrationsPath(tableName)
-      Migrator.migrate(@adapter, migrationsPath, null, (err)=>
+      migrateScope(@adapter, migrationsPath, tableName, (err)=>
         return done(err) if err
-        @AdapterWrapper.describe(tableName, (err, definition)->
-          return done(err) if err
-          assert.equal(_.keys(definition).length, 4)
-          done()
-        )
+        assertTableColumnCount(@AdapterWrapper, tableName, 4, done)
       )
 
   describe 'db:rollback', ->
     it 'should rollback one migration', (done)->
-      done()
-      #Migrator.rollback
-
+      Migrator.rollback(@adapter, migrationsPath, null, (err)=>
+        done(err)
+      )

@@ -35,9 +35,9 @@ class Migrator
       )
 
   @rollback: (adapter, migrationsPaths, steps, cb)->
-    @calculateTargetVersion(adapter, migrationsPaths, steps).then((version)=>
-      console.log(version)
-#      @migrate(adapter, migrationsPaths, version, cb)
+    steps = 1 unless steps
+    @calculateTargetVersion(adapter, migrationsPaths, steps).then((targetVersion)=>
+      @move('down', adapter, migrationsPaths, targetVersion, cb)
     ).catch(cb)
 
   @move: (direction, adapter, migrationsPaths, targetVersion, cb)->
@@ -48,18 +48,28 @@ class Migrator
       migrator.migrate(cb)
     )
 
-  @currentVersion: (cb)->
-    SchemaMigration.getAllVersions(@adapter, (err, versions)=>
+  @currentVersion: (adapter, cb)->
+    SchemaMigration.getAllVersions(adapter, (err, versions)=>
       return cb(err) if err
-      maxVersion = _.max(versions) || 0
+      if _.isEmpty(versions)
+        maxVersion = null
+      else
+        maxVersion = _.max(versions)
       cb(null, maxVersion)
     )
 
   @calculateTargetVersion: (adapter, migrationsPaths, steps)->
-    allMigrationFilesPromise = Promise.Promisify(MigrationPath.allMigrationFilesParsed)(allMigrationFiles)
-    currentVersionPromise = Promise.Promisify(@currentVersion)()
+    allMigrationFilesPromise = Promise.promisify(MigrationPath.allMigrationFilesParsed.bind(MigrationPath))(migrationsPaths)
+    currentVersionPromise = Promise.promisify(@currentVersion)(adapter)
     Promise.settle([allMigrationFilesPromise, currentVersionPromise]).then((res)->
-      console.log(res)
+      resolver = Promise.defer()
+      if _.all(res, (r)-> r.isFulfilled())
+        #The target version is in the second promise of the resolved promises
+        targetVersion = res[1].value()
+        resolver.resolve(targetVersion)
+      else
+        resolver.reject()
+      resolver.promise
     )
     ###
 migrator = self.new(direction, migrations(migrations_paths))
@@ -83,7 +93,7 @@ migrator = self.new(direction, migrations(migrations_paths))
       @migrated = new sets.Set(versions)
       promises = _.map(@runnable(), (migration)=>
         #TODO: Figure out how to do logging properly
-        console.log "Migrating to #{migration.name()} (#{migration.version()})"
+        #console.log "Migrating to #{migration.name()} (#{migration.version()})"
         executeMigrationInTransaction(migration, @direction)
         #rescue => e
         #canceled_msg = use_transaction?(migration) ? "this and " : ""
