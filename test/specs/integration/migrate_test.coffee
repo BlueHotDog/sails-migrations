@@ -6,6 +6,7 @@ path = require('path')
 assert = require('assert')
 mkdirp = require('mkdirp')
 rmdirp = require('../helpers/rmdirp.coffee')
+GeneralHelper = require("../helpers/general.coffee")
 
 MigrationPath = rek('lib/sails-migrations/migration_path.coffee')
 DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
@@ -39,11 +40,7 @@ describe 'migration', ->
       @AdapterWrapper = new AdapterWrapper(@adapter)
 
       DatabaseTasks.drop(@adapter, (err)=>
-#        console.log("err", err)
-        DatabaseTasks.create(@adapter, (err)=>
-#          console.log("err2", err)
-          done(err)
-        )
+        DatabaseTasks.create(@adapter, done)
       )
     )
 
@@ -54,10 +51,7 @@ describe 'migration', ->
 
   # create the schem migrations folder
   beforeEach (done)->
-    @AdapterWrapper.drop(SchemaMigration::tableName, (err)=>
-      return done(err) if err
-      @AdapterWrapper.define(SchemaMigration::tableName, SchemaMigration::attributes, done)
-    )
+    GeneralHelper.recreateSchemaTable().done(->done())
 
   describe 'db:migrate', ->
     it 'should be able to run a migration', (done)->
@@ -86,5 +80,6 @@ describe 'migration', ->
 
   describe 'db:rollback', ->
     it 'should rollback one migration', (done)->
-      Migrator.rollback
+      done()
+      #Migrator.rollback
 

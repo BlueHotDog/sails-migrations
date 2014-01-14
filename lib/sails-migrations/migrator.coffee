@@ -101,7 +101,9 @@ migrator = self.new(direction, migrations(migrations_paths))
     ourAdapter = new AdapterWrapper(@adapter)
     migration.migrate(ourAdapter, direction, (err)=>
       return cb(err) if err
-      @recordVersionStateAfterMigrating(migration.version()).then(cb)
+      @recordVersionStateAfterMigrating(migration.version()).then( (version)->
+        cb(null, version)
+      )
     )
 
   recordVersionStateAfterMigrating: (version)->
@@ -111,16 +113,11 @@ migrator = self.new(direction, migrations(migrations_paths))
       Promise.promisify(SchemaMigration.deleteAllByVersion.bind(SchemaMigration))(@adapter, version)
     else
       @migrated.add(version)
-      console.log("aaaaaaaaaa")
-      SchemaMigration.create(@adapter, { version: version }, =>
-        console.log("argussssssssss", arguments)
-        resolver.resolve(value);
+      SchemaMigration.create(@adapter, { version: version }, (err, model)=>
+        resolver.reject(err) if err
+        resolver.resolve(model)
       )
-      resolver.promise;
-#      create = Promise.promisify(SchemaMigration.create.bind(SchemaMigration))
-#      create(@adapter, { version: version }).then(()->
-#        console.log("argus", arguments)
-#      )
+      resolver.promise
 
   migrations: ->
     clone = _.clone(@_migrations)
