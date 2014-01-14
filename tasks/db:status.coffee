@@ -5,13 +5,13 @@
 path = require('path')
 _ = require('lodash')
 module.exports = (grunt) ->
-  grunt.registerTask('migration:status:validateTableExists', ()->
+  grunt.registerTask('db:status:validateTableExists', ()->
     done = @async()
-    @requires('migration:loadConfig')
+    @requires('db:loadConfig')
     @requiresConfig('migration.config')
 
     config = grunt.config.get('migration.config')
-    SchemaMigration  = grunt.helpers.loadLibModule("schema_migration")
+    SchemaMigration = grunt.helpers.loadLibModule("schema_migration")
 
     SchemaMigration.getInstance(config.defaultAdapter, (err, Model)->
       grunt.log.writeln("Checking if #{SchemaMigration::tableName} exists")
@@ -22,15 +22,15 @@ module.exports = (grunt) ->
       )
     )
   )
-  grunt.registerTask('migration:statusTask', 'checks the status of the migrations', ()->
+  grunt.registerTask('db:statusTask', 'checks the status of the migrations', ()->
     done = @async()
-    @requires('migration:loadConfig')
-    @requires('migration:status:validateTableExists')
+    @requires('db:loadConfig')
+    @requires('db:status:validateTableExists')
     @requiresConfig('migration.config')
 
     config = grunt.config.get('migration.config')
     SchemaMigration = grunt.helpers.loadLibModule("schema_migration")
-    MigrationHelper = grunt.helpers.loadLibModule("migration")
+    MigrationPath = grunt.helpers.loadLibModule("migration_path")
     fileList = []
 
     SchemaMigration.getInstance(config.defaultAdapter, (err, Model)->
@@ -42,7 +42,7 @@ module.exports = (grunt) ->
           appliedMigrations[dbMigration.version] = true
         )
 
-        MigrationHelper.allMigrationFilesParsed(grunt.config.get("migration.config.migrationOutDir"), (err, migrationFiles)->
+        MigrationPath.allMigrationFilesParsed(grunt.config.get("migration.config.migrationOutDir"), (err, migrationFiles)->
           # for each file, we see if we applied it or not, if we did, then it is in up state, else it's in down
           _(migrationFiles).forEach((fileData)->
             if (appliedMigrations[fileData.version])
@@ -67,9 +67,9 @@ module.exports = (grunt) ->
     )
   )
 
-  grunt.registerTask('migration:status', 'Display status of migrations', [
-    'migration:loadConfig',
-    'migration:status:validateTableExists',
-    'migration:statusTask'
+  grunt.registerTask('db:status', 'Display status of migrations', [
+    'db:loadConfig',
+    'db:status:validateTableExists',
+    'db:statusTask'
   ])
 

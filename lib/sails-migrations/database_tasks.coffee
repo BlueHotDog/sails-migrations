@@ -1,4 +1,5 @@
 exec = require('child_process').exec
+_ = require('lodash')
 LOCAL_HOSTS = ['127.0.0.1', 'localhost']
 class DatabaseTasks
   @executeQuery = (adapter, query, cb) ->
@@ -10,18 +11,18 @@ class DatabaseTasks
     switch adapter.identity
       when 'sails-mysql'
         @executeQuery(adapter, "CREATE DATABASE #{adapter.config.database}", (err, stdout, stdin)->
-          return cb(err)
+          return cb(err, adapter)
         )
 
-  @migrations_paths: ->
+  @migrationsPath: ->
     #TODO: sails should have something similar to rails Rails.application.paths['db/migrate'].to_a
-    @migrations_paths ||= 'db/migrate'
+    @migrationsPath ||= 'db/migrate'
 
   @drop: (adapter, cb)->
     switch adapter.identity
       when 'sails-mysql'
         @executeQuery(adapter, "DROP DATABASE #{adapter.config.database}", (err, stdout, stdin)->
-          return cb(err)
+          return cb(err, adapter)
         )
 
 

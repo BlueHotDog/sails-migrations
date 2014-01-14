@@ -1,29 +1,29 @@
-migrationHelper = require('./migration')
-SchemaMigration = require('./schema_migration')
-
 class MigrationRunner
   constructor: (@migrationData)->
 
   up: (adapter, cb)->
     migration = @requireMigration()
-    options = {adapters:{}}
-    options.adapters["adapterName"] = adapter
 
-    migration.up(adapter, (err)=>
-      return cb(err) if err
-
-      SchemaMigration.getInstance(adapter, (err, Model)=>
-        Model.create({version: @migrationData.version}, (err, model)->
-          return cb(err) if err
-          cb(null, model)
-        )
-      )
-    )
+    migration.up(adapter, cb)
 
   down: (adapter, cb)->
-    migration.down(cb)
+    migration = @requireMigration()
+
+    migration.down(adapter, cb)
 
   requireMigration: ->
     require(@migrationData.path)
+
+  version: ->
+    @migrationData.version
+
+  name: ->
+    @migrationData.name
+
+  path: ->
+    @migrationData.path
+
+  migrate: (adapter, direction, cb)->
+    @[direction](adapter, cb)
 
 module.exports = MigrationRunner

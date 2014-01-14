@@ -33,12 +33,17 @@
     "lodash": "~2.4",
     "bluebird": "~0.11",
     "glob": "~3.2",
-    "dot": "~1.0.2",
+    "dot": "~1.0",
     "moment": "~2.5",
-    "underscore.string": "~2.3.3"
+    "underscore.string": "~2.3",
+    "mkdirp": "~0.3",
+    "simplesets": "~1.2",
+    "async": "~0.2"
   },
   "devDependencies": {
-    "mocha": "~1.16.2",
-    "should": "~2.1.1"
+    "mocha": "~1.16",
+    "should": "~2.1",
+    "sinon": "~1.7",
+    "chai": "~1.8"
   }
 }

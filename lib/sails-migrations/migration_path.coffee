@@ -6,6 +6,7 @@ moment = require('moment')
 _s = require('underscore.string')
 
 class Migration
+
   @allMigrationsFiles: (paths = @migrationsPaths(), cb) ->
     paths = [paths] unless _.isArray(paths)
     result = _(paths).map((path) ->
@@ -39,17 +40,6 @@ class Migration
     "#{migrationNumber}_#{migrationName}"
 
   @nextMigrationNumber: -> moment().format('YYYYMMDDHHmmss')
-
-  @migrations: (paths, cb)->
-    paths = _.toArray(paths)
-    files = []
-    Promise
-    .map(paths, (path) ->
-        "#{path}/**/[0-9]*_*.{coffee,js}")
-    .map((path)->
-        glob(path, {}))
-    .map((files)->
-        console.log(files))
 
   @basePath: ->
     '/vagrant/sails-migrations/test/'
