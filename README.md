@@ -57,8 +57,38 @@ exports.down = function(adapter, done) {
 
 ```
 
-{#adapter}
-## Adapter API
+## <a id="contact_form"></a>Adapter API
+-  **define**: (tableName, definition, cb) - Defines a new table
+	- **tableName** - Table name to create
+	- **definition** - Definition is same as the attributes given to sails model
+	- **cb** - called with err,schema
+	- **example** - 
+		```
+			definition = {
+				first_name: {type: 'STRING'},
+				last_name: {type: 'STRING'},
+				id: {
+					type: 'INTEGER',
+					autoIncrement: true,
+					defaultsTo: 'AUTO_INCREMENT',
+					primaryKey: true
+				}
+			}
+			adapter.define('myTable', definition, function (err, schema) {
+				//do something			})
+		```
+- **drop**: (tableName, cb) - Drops a table
+	- **tableName** - Table name of the table to drop 
+	- **cb** - called with err,schema
+	- **example** - ```adapter.drop('myTable', done)```
+- **addAttribute**: (tableName, attrName, attrDef, cb) - adds a column to an existing table
+	- **tableName** - Table name to which to add the column
+	- **attrName** - Name of the attribute to add
+	- **
+- **removeAttribute**: (tableName, attrName, cb)
+- **query**: (query, data, cb)
+- **describe**: (tableName, cb)
+
 ## TODO
 
 - [ ] waterline should support database drop/create
