@@ -34,9 +34,8 @@ A migration constitutes of two parts:
 
 Each phase(up/down) should receive two parameters: 
 
-1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter][adapter] for more info
-2. done
-[Link back to H2](#adapter)
+1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter) for more info
+2. done - call this once the migration is done
 
 ## Example of a basic migration
 
@@ -47,12 +46,11 @@ Each phase(up/down) should receive two parameters:
 * */
 
 exports.up = function(adapter, done) {
-	
 	done();
 };
 
 exports.down = function(adapter, done) {
-  done();
+	done();
 };
 
 ```
@@ -63,7 +61,8 @@ exports.down = function(adapter, done) {
 	- **definition** - Definition is same as the attributes given to sails model
 	- **cb** - called with err,schema
 	- **example** - 
-		```
+
+		```javascript
 			definition = {
 				first_name: {type: 'STRING'},
 				last_name: {type: 'STRING'},
@@ -75,22 +74,58 @@ exports.down = function(adapter, done) {
 				}
 			}
 			adapter.define('myTable', definition, function (err, schema) {
-				//do something			})
+				//do something
+			})
 		```
 - **drop**: (tableName, cb) - Drops a table
 	- **tableName** - Table name of the table to drop 
 	- **cb** - called with err,schema
-	- **example** - ```adapter.drop('myTable', done)```
+	- **example** - 
+	
+	```javascript
+		adapter.drop('myTable', done)
+	```
 - **addAttribute**: (tableName, attrName, attrDef, cb) - adds a column to an existing table
 	- **tableName** - Table name to which to add the column
 	- **attrName** - Name of the attribute to add
-	- **
-- **removeAttribute**: (tableName, attrName, cb)
+	- **example** - 
+	
+	```javascript
+		adapter.addAttribute('myTable', 'phoneNumber', {type:'INTEGER'}, done);
+	```
+- **removeAttribute**: (tableName, attrName, cb) - removes a column from an existing table
+	-  **tableName** - Table name from which to remove the attribute
+	-  **attrName** - Attribute to remove
+	- **cb** - called with err if any
+	- **example** - 
+	
+	```javascript
+		adapter.removeAttribute('myTable', 'phoneNumber', done);
+	```
 - **query**: (query, data, cb)
-- **describe**: (tableName, cb)
+	-	**query** - a String query to execute directly against the DB
+	-	**data** - used to incorpurate values into the query
+	-	**cb**
+- **describe**: (tableName, cb) - returns a definition of a table, i.e its schema
+	- **tableName** - the table name to describe
+	- **cb** called with err,attributes, when schema is a hash of the following format:
+	
+	```javascript
+		{
+			id: {
+					type: 'INTEGER',
+					autoIncrement: true,
+					defaultsTo: 'AUTO_INCREMENT',
+					primaryKey: true
+				}
+		}
+	```
+	
 
 ## TODO
 
 - [ ] waterline should support database drop/create
 - [ ] add supports for transactions
 - [ ] VERBOSE mode in tasks
+- [ ] Support synchronous migrations - i.e dont force migration functions to accept done
+- [ ] Support migrations that use promises instead of cb
