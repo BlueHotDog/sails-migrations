@@ -116,6 +116,7 @@ class Migrator
       
       (callback)=>
         @executeMigrationInTransaction(migration, @direction, (err, version)=>
+          return callback(err) if err
           callback()
         )
 
