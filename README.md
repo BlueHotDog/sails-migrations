@@ -3,15 +3,20 @@
 Sails-Migration provides an easy way to manage database migrations, much like rails does.
 This means you can have a fine-grain control over your schema/data transformations between versions.
 
+
+
 ## Installing:
 
-Sails-Migrations only dependencies is sails, so it should be only used within a sails project
+Sails-Migrations' only dependencies are sails and mysql/postgres adapters,
+So it should be only used within a sails project.
 To install either run:
 
 ```bash
 npm install --save sails-migrations
 ```
+
 or add sails-migrations to your package json and run
+
 ```bash
 npm install
 ```
@@ -23,18 +28,6 @@ Before running any migrations, you need to verify your database exists, you can 
 grunt db:create
 ```
 
-## Creating a migration:
-
-To create a new migration, simply run:
-```
-grunt migration:generate --name="my migration"
-```
-This should create a new filed within the db/migrations folder called [YYYYMMDDHHMMSS]\_my\_migration.js
-
-sails-migrations uses the timestamp to determine both the order of the migrations and which
-migrations were run.
-
-
 ## Working with migrations
 
 A migration constitutes of two parts:
@@ -44,10 +37,22 @@ A migration constitutes of two parts:
 
 Each phase(up/down) should receive two parameters:
 
-1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter) for more info
+1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter_api) for more info
 2. done - call this once the migration is done
 
-## Example of a basic migration
+## Creating a migration:
+
+To create a new migration, simply run:
+```bash
+grunt migration:generate --name="my migration"
+```
+This should create a new filed within the **db/migrations** folder called [YYYYMMDDHHMMSS]\_my\_migration.js
+
+sails-migrations uses the timestamp to determine both the order of the migrations and which
+migrations were run.
+
+
+## Example of a basic migration generated
 
 ```javascript
 /*
@@ -65,7 +70,19 @@ exports.down = function(adapter, done) {
 
 ```
 
-## <a id="contact_form"></a>Adapter API
+## Migration CLI
+
+- ```grunt db:migrate```: By default, runs migrations up to the latest migration available
+  - **[--version=]** - _optional_ - up to which version to run the migrations(inclusive)
+- ```grunt db:rollback```: By default, runs the down step of the latest migration executed
+  - **[--steps=1]** - _optional_ How many rollbacks to perform, default is 1
+- ```grunt db:drop```: Drops the database
+- ```grunt db:create```: Creates an empty database(with the [sails_schema_migrations](#sails_schema_migrations) table)
+- ```grunt db:reset```: Drops & Creates the database
+- ```grunt db:status```: Prints out the status of each migration in the migration folder
+
+## <a id="adapter_api"></a>Adapter API
+
 -  **define**: (tableName, definition, cb) - Defines a new table
 	- **tableName** - Table name to create
 	- **definition** - Definition is same as the attributes given to sails model
