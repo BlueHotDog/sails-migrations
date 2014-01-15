@@ -118,6 +118,14 @@ describe 'migration', ->
           CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 2, done)
         )
 
+    context 'when an invalid targetVersion is given', ->
+      it 'should throw an error', (done)->
+        @tableName = 'many_migrations'
+        migrateScope(@adapter, migrationsPath, @tableName, 2220141, (err, versions)=>
+          assert.equal(err, 'Unknown migration version error 2220141')
+          done()
+        )
+
   describe 'db:rollback', ->
     context 'default behavior', ->
       it 'should be able rollback one migration', (done)->
@@ -142,4 +150,21 @@ describe 'migration', ->
           return done(err) if err
           assert.equal(versions.length, 4)
           CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 2, done)
+        )
+
+    context 'when a valid steps argument is given', ->
+      it 'should be able rollback two steps', (done)->
+        @tableName = 'many_migrations'
+        rollbackScope(@adapter, migrationsPath, @tableName, 2, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 3)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+        )
+
+      it 'should be able rollback many steps', (done)->
+        @tableName = 'many_migrations'
+        rollbackScope(@adapter, migrationsPath, @tableName, 4, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 1)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
         )
