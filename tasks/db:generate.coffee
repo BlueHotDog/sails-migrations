@@ -6,6 +6,7 @@ dot = require('dot')
 fs = require('fs')
 path = require('path')
 moment = require('moment')
+mkdirp = require('mkdirp')
 
 module.exports = (grunt) ->
   grunt.registerTask("migration:generateInternalTask", ->
@@ -18,6 +19,7 @@ module.exports = (grunt) ->
     MigrationPath = require(path.join(config.migrationLibPath, "migration_path"))
     migrationFullname = MigrationPath.generateMigrationName(grunt.option('name'))
     migrationPath = path.join(config.migrationOutDir,"#{migrationFullname}.js")
+    mkdirp.sync(config.migrationOutDir) # making sure the migrations outdir directory exists
 
     # This setting will make sure doT preserves the white spaces in the migration template file.
     dot.templateSettings.strip = false
