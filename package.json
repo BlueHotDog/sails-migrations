@@ -14,6 +14,7 @@
   "keywords": [
     "sails",
     "sailsjs",
+    "sails.js",
     "migrations",
     "waterline"
   ],
@@ -21,7 +22,12 @@
     "BlueHotDog",
     "itayadler"
   ],
-  "license": "BSD-2-Clause",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://sails.mit-license.org/"
+    }
+  ],
   "bugs": {
     "url": "https://github.com/BlueHotDog/sails-migrations/issues"
   },
