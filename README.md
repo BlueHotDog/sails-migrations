@@ -3,6 +3,13 @@
 Sails-Migration provides an easy way to manage database migrations, much like rails does.
 This means you can have a fine-grain control over your schema/data transformations between versions.
 
+## Content
+
+- installing
+- creating a migration
+- working with migration
+ 
+
 ## Installing:
 
 Sails-Migrations only dependencies is sails, so it should be only used within a sails project
@@ -11,7 +18,17 @@ To install either run:
 ```bash
 npm install --save sails-migrations
 ```
-or add sails-migrations to your package json and run ```npm install```
+or add sails-migrations to your package json and run 
+```bash
+npm install
+```
+
+## Initializing your database
+
+Before running any migrations, you need to verify your database exists, you can simply do that by running:
+```bash
+grunt db:create
+```
 
 ## Creating a migration:
 
@@ -19,7 +36,7 @@ To create a new migration, simply run:
 ```
 grunt migration:generate --name="my migration"
 ```
-This should create a new filed within the db/migrations folder called [YYYYMMDDHHMMSS]_my_migration.js
+This should create a new filed within the db/migrations folder called [YYYYMMDDHHMMSS]\_my\_migration.js
 
 sails-migrations uses the timestamp to determine both the order of the migrations and which
 migrations were run.
@@ -42,7 +59,7 @@ Each phase(up/down) should receive two parameters:
 ```javascript
 /*
 * Sails migration
-* Created by BlueHotDog at 25/01/1985
+* Created at 25/01/1985
 * */
 
 exports.up = function(adapter, done) {
@@ -124,8 +141,7 @@ exports.down = function(adapter, done) {
 
 ## TODO
 
-- [ ] waterline should support database drop/create
-- [ ] add supports for transactions
+- [ ] Add supports for transactions
 - [ ] VERBOSE mode in tasks
 - [ ] Support synchronous migrations - i.e dont force migration functions to accept done
 - [ ] Support migrations that use promises instead of cb
