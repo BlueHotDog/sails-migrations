@@ -94,13 +94,28 @@ describe 'migration', ->
         )
 
     context 'when a valid targetVersion is given', ->
-
-      it 'should be able to run migrations correctly', (done)->
+      it 'should be able to run 1 migrations correctly', (done)->
         @tableName = 'many_migrations'
-        migrateScope(@adapter, migrationsPath, @tableName, 20143, (err, versions)=>
+        migrateScope(@adapter, migrationsPath, @tableName, 20141, (err, versions)=>
           return done(err) if err
-          assert.equal(versions.length, 3)
+          assert.equal(versions.length, 1)
           CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+        )
+
+      it 'should be able to run 2 migrations correctly', (done)->
+        @tableName = 'many_migrations'
+        migrateScope(@adapter, migrationsPath, @tableName, 20142, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 2)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 4, done)
+        )
+
+      it 'should be able to run 4 migrations correctly', (done)->
+        @tableName = 'many_migrations'
+        migrateScope(@adapter, migrationsPath, @tableName, 20144, (err, versions)=>
+          return done(err) if err
+          assert.equal(versions.length, 4)
+          CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 2, done)
         )
 
   describe 'db:rollback', ->

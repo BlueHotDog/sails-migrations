@@ -11,5 +11,3 @@ exports.down = function(adapter, done) {
     done(err);
   });
 };
-
-

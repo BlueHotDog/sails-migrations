@@ -172,15 +172,13 @@ class Migrator
     start = @start()
     finish = @finish()
     migrations = @migrations()
-    if finish - start > 1
-      finish += 1
-    runnable = migrations.slice(start, finish)
-    runnable = _(runnable)
-    if @isUp
+    runnable = _(migrations[start..finish])
+    if @isUp()
       runnable.reject(@ran.bind(@)).value()
     else
       # skip the last migration if we're headed down, but not ALL the way down
-      runnable.pop if @targetMigration()
+      if @targetMigration()
+        runnable = runnable.initial() 
       runnable.filter(@ran.bind(@)).value()
 
   start: ->
@@ -198,7 +196,7 @@ class Migrator
     if _.isNumber(index)
       index
     else
-      @migrations().length
+      @migrations().length - 1
     
   isUp: ->
     @direction == 'up'
@@ -207,6 +205,7 @@ class Migrator
     @direction == 'down'
 
   ran: (migration)->
-    _.contains(@migrated, migration.version())
+    migratedSetAsArray = @migrated.array()
+    _.contains(migratedSetAsArray, migration.version().toString())
 
 module.exports = Migrator
