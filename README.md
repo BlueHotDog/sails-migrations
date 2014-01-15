@@ -1,56 +1,48 @@
 # sails-migrations
 
-Sails-Migration provides an easy way to manage database migrations, much like rails does.
-This means you can have a fine-grain control over your schema/data transformations between versions.
-
-
+sails-migrations provides an easy way to manage database migrations, much like rails does.
+This means you can have fine-grained control over your schema/data transformations between versions.
 
 ## Installing:
 
-Sails-Migrations' only dependencies are sails and mysql/postgres adapters,
-So it should be only used within a sails project.
+sails-migrations' only dependencies are Sails and mysql/postgres(currently) adapters,
 To install either run:
 
 ```bash
 npm install --save sails-migrations
 ```
 
-or add sails-migrations to your package json and run
-
-```bash
-npm install
-```
-
 ## Initializing your database
 
-Before running any migrations, you need to verify your database exists, you can simply do that by running:
+Before running any migrations, you need to verify your database exists, you can do that by running:
+
 ```bash
 grunt db:create
 ```
+
+This should create an empty database with the _sails\_schema\_migrations_  table - which is used to track what migrations were run against this db.
 
 ## Working with migrations
 
 A migration constitutes of two parts:
 
-- up: determines what should be performed when you want to forward your database one version
-- down: should be the exact reverse of the up method, so for example, if on the up phase you created a table, the down phase should delete that table.
+- up: determines what should be performed when you want to forward your database to this version.
+- down: should be the exact reverse of the up method, so, for example, if on the up phase you created a table, the down phase should delete that table.
 
 Each phase(up/down) should receive two parameters:
 
-1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter_api) for more info
-2. done - call this once the migration is done
+1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter_api) for more info.
+2. done - callback
 
 ## Creating a migration:
 
 To create a new migration, simply run:
 ```bash
-grunt migration:generate --name="my migration"
+grunt migration:generate --name="my migration name"
 ```
-This should create a new filed within the **db/migrations** folder called [YYYYMMDDHHMMSS]\_my\_migration.js
+This should create a new file within the **db/migrations** folder called [YYYYMMDDHHMMSS]\_my\_migration\_name.js
 
-sails-migrations uses the timestamp to determine both the order of the migrations and which
-migrations were run.
-
+sails-migrations uses the timestamp to determine both the order of the migrations and which migrations were run.
 
 ## Example of a basic migration generated
 
@@ -73,9 +65,9 @@ exports.down = function(adapter, done) {
 ## Migration CLI
 
 - ```grunt db:migrate```: By default, runs migrations up to the latest migration available
-  - **[--version=]** - _optional_ - up to which version to run the migrations(inclusive)
+  - _[--version=]_ - _optional_ - up to which version to run the migrations(inclusive)
 - ```grunt db:rollback```: By default, runs the down step of the latest migration executed
-  - **[--steps=1]** - _optional_ How many rollbacks to perform, default is 1
+  - _[--steps=1]_ - _optional_ How many rollbacks to perform, default is 1
 - ```grunt db:drop```: Drops the database
 - ```grunt db:create```: Creates an empty database(with the [sails_schema_migrations](#sails_schema_migrations) table)
 - ```grunt db:reset```: Drops & Creates the database
