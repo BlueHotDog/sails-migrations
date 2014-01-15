@@ -33,6 +33,12 @@
       "url": "http://sails.mit-license.org/"
     }
   ],
+  "files": [
+    "lib",
+    "tasks",
+    "LICENSE",
+    "README.md"
+  ],
   "bugs": {
     "url": "https://github.com/BlueHotDog/sails-migrations/issues"
   },
