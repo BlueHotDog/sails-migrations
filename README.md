@@ -1,5 +1,9 @@
 # sails-migrations
 
+[![NPM version](https://badge.fury.io/js/sails-migrations.png)](http://badge.fury.io/js/sails-migrations)
+[![Dependency Status](https://gemnasium.com/BlueHotDog/sails-migrations.png)](https://gemnasium.com/BlueHotDog/sails-migrations)
+[![Code Climate](https://codeclimate.com/github/BlueHotDog/sails-migrations.png)](https://codeclimate.com/github/BlueHotDog/sails-migrations)
+
 sails-migrations provides an easy way to manage database migrations, much like rails does.
 This means you can have fine-grained control over your schema/data transformations between versions.
 
