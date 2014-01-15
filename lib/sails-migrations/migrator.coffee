@@ -80,17 +80,20 @@ class Migrator
   @calculateTargetVersion: (adapter, direction, migrationsPaths, steps)->
     resolver = Promise.defer()
     @migrations(migrationsPaths, (err, migrations)=>
-      return resolver(reject) if err
+      return resolver.reject(err) if err
+      SchemaMigration.getAllVersions(adapter, (err, versions)=>
+        return resolver.reject(err) if err
 
-      dummyMigrator = new Migrator(adapter, direction, migrations)
+        dummyMigrator = new Migrator(adapter, direction, migrations, versions)
 
-      targetVersion = null
-      startIndex = dummyMigrator.start()
-      if startIndex?
-        finish = dummyMigrator.getMigrationByIndex(startIndex + steps)
-        targetVersion = if finish? then finish.version() else 0
+        targetVersion = null
+        startIndex = dummyMigrator.start()
+        if startIndex?
+          finish = dummyMigrator.getMigrationByIndex(startIndex + steps)
+          targetVersion = if finish? then finish.version() else 0
 
-      resolver.resolve(targetVersion)
+        resolver.resolve(targetVersion)
+      )
     )
     resolver.promise
 
@@ -122,24 +125,28 @@ class Migrator
     if !@targetMigration() && @targetVersion && @targetVersion > 0
       return cb("Unknown migration version error #{@targetVersion}")
 
-    migrationsToRun = _.map(@runnable(), (migration)=>
-      #TODO: Figure out how to do logging properly
-      #console.log "Migrating to #{migration.name()} (#{migration.version()})"
+    runnable = @runnable()
+    migrationsToRun = _.map(runnable, (migration)=>
       
       (callback)=>
         @executeMigrationInTransaction(migration, @direction, (err, version)=>
-          return callback(err) if err
+          return callback(err, migration) if err
           callback()
         )
 
+      #TODO: Figure out how to do logging properly
       #rescue => e
       #canceled_msg = use_transaction?(migration) ? "this and " : ""
       #raise StandardError, "An error has occurred, #{canceled_msg}all later migrations canceled:\n\n#{e}", e.backtrace
       #end
     )
-    async.waterfall(migrationsToRun, (err, result)=>
-      return cb(err) if err
-      cb()
+    async.waterfall(migrationsToRun, (err, migration)=>
+      if err
+        migratedSetAsArray = @migrated.array()
+        failedMigration = migration
+        migrated = _.filter(runnable, (r)-> _.contains(migratedSetAsArray, r.version()))
+        return cb(err, migrated, failedMigration) 
+      cb(null, runnable)
     )
 
   executeMigrationInTransaction: (migration, direction, cb)->

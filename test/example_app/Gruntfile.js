@@ -468,6 +468,8 @@ module.exports = function (grunt) {
     'sails-linker:prodStylesJADE',
     'sails-linker:devTplJADE'
   ]);
+  grunt.loadNpmTasks('gake');
+  grunt.loadNpmTasks('sails-migrations');
 
   // When API files are changed:
   // grunt.event.on('watch', function(action, filepath) {
@@ -484,6 +486,4 @@ module.exports = function (grunt) {
   //     console.error(filepath + ' has ' + action + ', but could not signal the Sails.js server: ' + e.message);
   //   });
   // });
-//  grunt.loadNpmTasks('gake');
-//  grunt.loadNpmTasks('sails-migrations');
 };

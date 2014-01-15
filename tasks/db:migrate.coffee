@@ -3,26 +3,51 @@
   Please visit http://gruntjs.com/ to learn more about how to work with grunt tasks
 ###
 path = require('path')
+_ = require('lodash')
 
 module.exports = (grunt, done) ->
-  grunt.registerTask('db:migrateTask', 'migrate', ()->
+  grunt.registerTask('db:migrateTask', 'migrate', ->
     done = @async()
     @requires('db:loadConfig')
+    @requiresConfig('migration.config')
     config = grunt.config.get('migration.config')
 
-    MigrationRunner = grunt.helpers.loadLibModule('migration_runner')
-    MigrationPath = grunt.helpers.loadLibModule('migration_path')
+    migrationsPath = config.migrationOutDir
+    adapter = config.defaultAdapter
+    targetVersion = grunt.option('version')
 
-    MigrationPath.allMigrationsFiles([config.migrationOutDir], (err, migrationFiles)->
-      migrationRunner = new MigrationRunner(MigrationPath.latestMigration(migrationFiles))
-      migrationRunner.up(config.defaultAdapter, (err, model)->
-        return grunt.fail.fatal(err) if err
-        grunt.log.oklns("Successfully migrated version:\t#{migrationRunner.migrationData.version}")
-        done()
+    Migrator = grunt.helpers.loadLibModule('migrator')
+    Migrator.migrate(adapter, migrationsPath, targetVersion, (err, migrations, failedMigration)->
+      _.each(migrations, (migration)->
+        grunt.log.oklns("Migrated #{migration.name()} #{migration.version()}")
       )
-
+      if failedMigration
+        grunt.fail.fatal("Failed to migrate #{failedMigration.name()} #{failedMigration.version()} error: #{err}")
+      done()
     )
   )
 
+  grunt.registerTask('db:rollbackTask', 'rollback', ->
+    done = @async()
+    @requires('db:loadConfig')
+    @requiresConfig('migration.config')
+    config = grunt.config.get('migration.config')
+
+    migrationsPath = config.migrationOutDir
+    adapter = config.defaultAdapter
+    steps = grunt.option('steps')
+
+    Migrator = grunt.helpers.loadLibModule('migrator')
+    Migrator.rollback(adapter, migrationsPath, steps, (err, migrations, failedMigration)->
+      _.each(migrations, (migration)->
+        grunt.log.oklns("Rolling back #{migration.name()} #{migration.version()}")
+      )
+      if failedMigration
+        grunt.fail.fatal("Failed to rollback #{failedMigration.name()} #{failedMigration.version()} error: #{err}")
+      done()
+    )
+  )
+
+  grunt.registerTask('db:rollback', ['db:loadConfig', 'db:rollbackTask'])
   grunt.registerTask('db:migrate', ['db:loadConfig', 'db:migrateTask'])
 
