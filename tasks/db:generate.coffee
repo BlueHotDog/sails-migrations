@@ -8,7 +8,7 @@ path = require('path')
 moment = require('moment')
 
 module.exports = (grunt) ->
-  grunt.registerTask("db:generateInternalTask", ->
+  grunt.registerTask("migration:generateInternalTask", ->
     @requires("db:loadConfig")
     @requiresConfig("migration.config")
     grunt.fail.fatal("The --name parameter is required") unless grunt.option('name')
@@ -19,10 +19,12 @@ module.exports = (grunt) ->
     migrationFullname = MigrationPath.generateMigrationName(grunt.option('name'))
     migrationPath = path.join(config.migrationOutDir,"#{migrationFullname}.js")
 
+    # This setting will make sure doT preserves the white spaces in the migration template file.
+    dot.templateSettings.strip = false
     templates = dot.process(path: config.templatesPath)
-    migrationContent = templates.migration(username: "moshe", creationDate:  moment().format())
+    migrationContent = templates.migration(creationDate:  moment().format())
 
     fs.writeFileSync(migrationPath, migrationContent)
   )
 
-  grunt.registerTask("db:generate", "run database migrations", ['db:loadConfig', 'db:generateInternalTask'])
+  grunt.registerTask("migration:generate", "run database migrations", ['db:loadConfig', 'migration:generateInternalTask'])
