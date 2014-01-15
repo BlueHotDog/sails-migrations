@@ -18,9 +18,14 @@
     "migrations",
     "waterline"
   ],
-  "author": [
-    "BlueHotDog",
-    "itayadler"
+  "author": "BlueHotDog",
+  "contributors": [
+    {
+      "name": "Danni Friedland"
+    },
+    {
+      "name": "Itay Adler"
+    }
   ],
   "licenses": [
     {
