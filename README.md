@@ -6,11 +6,15 @@ This means you can have fine-grained control over your schema/data transformatio
 ## Installing:
 
 sails-migrations' only dependencies are Sails and mysql/postgres(currently) adapters,
-To install either run:
+To install run:
 
 ```bash
 npm install --save sails-migrations
 ```
+## Example app
+
+You can checkout an example Sails app in the [following git repo](https://github.com/itayadler/sails-migrations-testapp).
+
 
 ## Initializing your database
 
