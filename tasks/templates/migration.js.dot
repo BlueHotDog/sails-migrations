@@ -1,6 +1,6 @@
 /*
 * Sails migration
-* Created by {{=it.creationDate}}
+* Created at {{=it.creationDate}}
 * */
 
 exports.up = function(adapter, done) {
