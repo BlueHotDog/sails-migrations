@@ -52,7 +52,7 @@ This should create a new file within the **db/migrations** folder called [YYYYMM
 
 sails-migrations uses the timestamp to determine both the order of the migrations and which migrations were run.
 
-## Example of a basic migration generated
+## Example of a basic migration file
 
 ```javascript
 /*
@@ -61,11 +61,11 @@ sails-migrations uses the timestamp to determine both the order of the migration
 * */
 
 exports.up = function(adapter, done) {
-	done();
+	adapter.define('tableName', {name: {type: 'STRING'}}, done);
 };
 
 exports.down = function(adapter, done) {
-	done();
+	adapter.drop('tableName', done);
 };
 
 ```
