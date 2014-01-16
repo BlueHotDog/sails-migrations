@@ -49,7 +49,7 @@
     "grunt": "~0.4",
     "gake": "~0.1",
     "lodash": "~2.4",
-    "bluebird": "~0.11",
+    "bluebird": "~1.0",
     "glob": "~3.2",
     "dot": "~1.0",
     "moment": "~2.5",
