@@ -34,13 +34,13 @@ This should create an empty database with the _sails\_schema\_migrations_  table
 
 A migration constitutes of two parts:
 
-- up: determines what should be performed when you want to forward your database to this version.
-- down: should be the exact reverse of the up method, so, for example, if on the up phase you created a table, the down phase should delete that table.
+- `up`: determines what should be performed when you want to forward your database to this version.
+- `down`: should be the exact reverse of the up method, so, for example, if on the up phase you created a table, the down phase should delete that table.
 
-Each phase (up/down) will receive two parameters:
+Each phase (`up`/`down`) will receive two `parameters`:
 
-1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter_api) for more info.
-2. done - callback
+1. `adapter` - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter_api) for more info.
+2. `done` - callback
 
 ## Creating a migration:
 
