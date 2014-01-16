@@ -5,11 +5,15 @@ class DatabaseTasks
   @executeQuery = (adapter, query, cb) ->
     switch adapter.identity
       when 'sails-mysql'
-        exec("mysql -h #{adapter.config.host} -u #{adapter.config.user} -p#{adapter.config.password} -e '#{query}'", cb)
+        passwordField = ''
+        passwordField = "-p#{adapter.config.password}" unless _.isEmpty(adapter.config.password)
+        exec("mysql -h #{adapter.config.host} -u #{adapter.config.user} #{passwordField} -e '#{query}'", cb)
 
   @create: (adapter, cb)->
     switch adapter.identity
       when 'sails-mysql'
+        passwordField = ''
+        passwordField = "-p#{adapter.config.password}" unless _.isEmpty(adapter.config.password)
         @executeQuery(adapter, "CREATE DATABASE #{adapter.config.database}", (err, stdout, stdin)->
           return cb(err, adapter)
         )
