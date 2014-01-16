@@ -9,7 +9,7 @@ This means you can have fine-grained control over your schema/data transformatio
 
 ## Installing:
 
-sails-migrations' only dependencies are Sails and mysql/postgres(currently) adapters,
+sails-migrations' only dependencies are Sails and mysql/postgres (currently) adapters,
 To install run:
 
 ```bash
@@ -17,7 +17,7 @@ npm install --save sails-migrations
 ```
 ## Example app
 
-You can checkout an example Sails app in the [following git repo](https://github.com/itayadler/sails-migrations-testapp).
+You can checkout an [example Sails](https://github.com/itayadler/sails-migrations-testapp).
 
 
 ## Initializing your database
@@ -37,7 +37,7 @@ A migration constitutes of two parts:
 - up: determines what should be performed when you want to forward your database to this version.
 - down: should be the exact reverse of the up method, so, for example, if on the up phase you created a table, the down phase should delete that table.
 
-Each phase(up/down) should receive two parameters:
+Each phase (up/down) will receive two parameters:
 
 1. adapter - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter_api) for more info.
 2. done - callback
@@ -85,7 +85,7 @@ exports.down = function(adapter, done) {
 
 -  **define**: (tableName, definition, cb) - Defines a new table
 	- **tableName** - Table name to create
-	- **definition** - Definition is same as the attributes given to sails model
+	- **definition** - Same as the attributes given to sails model
 	- **cb** - called with err,schema
 	- **example** -
 
@@ -115,6 +115,7 @@ exports.down = function(adapter, done) {
 - **addAttribute**: (tableName, attrName, attrDef, cb) - adds a column to an existing table
 	- **tableName** - Table name to which to add the column
 	- **attrName** - Name of the attribute to add
+	- **attrDef** - Same as in waterline model
 	- **example** -
 
 	```javascript
