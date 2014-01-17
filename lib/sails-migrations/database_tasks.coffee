@@ -12,8 +12,8 @@ class DatabaseTasks
   @create: (adapter, cb)->
     switch adapter.identity
       when 'sails-mysql'
-        @executeQuery(adapter, "CREATE DATABASE #{adapter.config.database}", (err, stdout, stdin)->
-          return cb(err, adapter)
+        @executeQuery(adapter, "CREATE DATABASE #{adapter.config.database}", (err, stdout, stdin)=>
+          cb(err, adapter)
         )
 
   @migrationsPath: ->

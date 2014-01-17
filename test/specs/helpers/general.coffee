@@ -12,6 +12,7 @@ class General
   @getAdapter: ->
     resolver = Promise.defer()
     SailsIntegration.loadSailsConfig(@modulesPath, (err, config)=>
+      return resolver.reject(err) if err
       resolver.resolve(config.defaultAdapter)
     )
     resolver.promise
@@ -29,13 +30,14 @@ class General
     )
 
   @recreateDatabase: ->
-    @getAdapter().then((adapter)->
-      resolver = Promise.defer()
-      DatabaseTasks.drop(adapter, ->
+    resolver = Promise.defer()
+    resetDb = (adapter)=>
+      DatabaseTasks.drop(adapter, =>
         DatabaseTasks.create(adapter, resolver.callback)
       )
-      resolver.promise
-    )
+
+    @getAdapter().done(resetDb)
+    resolver.promise
 
 
 module.exports = General

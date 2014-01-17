@@ -2,7 +2,7 @@
 --require chai
 --require coffee-script
 --require test/specs/spec_helper
---timeout 2000
+--timeout 20000
 --reporter spec
 --ui bdd
 --growl
