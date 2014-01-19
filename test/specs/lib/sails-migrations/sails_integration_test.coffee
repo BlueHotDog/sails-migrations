@@ -6,7 +6,7 @@ describe 'SailsIntegration', ->
   sandbox = sinon.sandbox.create()
 
   before ->
-    @modulesPath = path.resolve("test/example_app/node_modules")
+    @modulesPath = path.resolve("samples/example_app/node_modules")
     @Sails = require(path.join(@modulesPath, 'sails'))
 
   afterEach ->

@@ -6,8 +6,8 @@ SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
 
 class General
-  @modulesPath: path.resolve("test/example_app/node_modules")
-  @migrationsPath = path.resolve('test/example_app/db/migrations')
+  @modulesPath: path.resolve("samples/example_app/node_modules")
+  @migrationsPath = path.resolve('samples/example_app/db/migrations')
 
   @getAdapter: ->
     resolver = Promise.defer()
