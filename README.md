@@ -71,6 +71,25 @@ exports.down = function(adapter, done) {
 
 ```
 
+## Example of a migration using promises(BlueBird)
+
+```javascript
+/*
+* Sails migration
+* Created at 25/01/1985
+* */
+
+var Promise = require('bluebird')
+exports.up = function(adapter) {
+    var defineWithPromise = Promise.promisify(adapter.define);
+    defineWithPromise('tableName', {name: {type: 'STRING'}});
+};
+
+exports.down = function(adapter, done) {
+	adapter.drop('tableName', done);
+};
+
+```
 ## Migration CLI
 
 - ```grunt db:migrate```: By default, runs migrations up to the latest migration available

@@ -2,6 +2,7 @@ path = require('path')
 
 class SailsIntegration
   cache= null
+
   sailsPath = (modulesPath) ->
     path.join(modulesPath, 'sails')
 
