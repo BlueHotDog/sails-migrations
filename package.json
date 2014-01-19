@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha test/specs",
-    "postinstall": "cd test/example_app && npm install && cd ../../"
+    "postinstall": "cd samples/example_app && npm install && cd ../../"
   },
   "repository": {
     "type": "git",
