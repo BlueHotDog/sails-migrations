@@ -16,24 +16,33 @@ module.exports = (grunt) ->
     done = @async()
 
     databaseTasks = grunt.helpers.loadLibModule("database_tasks")
-    schemaMigrationModel = grunt.helpers.loadLibModule("schema_migration")
-
     grunt.log.writeln("Trying to create a new database")
 
     databaseTasks.create(config.defaultAdapter, (err)->
       return grunt.fail.fatal(err) if err
       grunt.log.oklns("Database created successfully")
-
-      grunt.log.writeln("Creating version table")
-      schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
-        return grunt.fail.fatal(err) if err
-        grunt.log.oklns("table created successfully")
-        done()
-      )
     )
   )
 
-  grunt.registerTask("db:create", "run database migrations", ['db:loadConfig', 'db:createInternalTask'])
+  grunt.registerTask("db:createVersionTable", ->
+    @requires("db:loadConfig")
+    @requiresConfig("migration.config")
+
+    config = grunt.config.get('migration.config')
+    done = @async()
+
+    schemaMigrationModel = grunt.helpers.loadLibModule("schema_migration")
+    grunt.log.writeln("Creating version table")
+    schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
+      return grunt.fail.fatal(err) if err
+      grunt.log.oklns("version table created successfully")
+      done()
+    )
+  )
+
+  grunt.registerTask("db:setup", "create version table", ['db:loadConfig', 'db:createVersionTable'])
+
+  grunt.registerTask("db:create", "run database migrations", ['db:loadConfig', 'db:createInternalTask', 'db:createVersionTable'])
 
   grunt.registerTask("db:dropInternalTask", ->
     @requires("db:loadConfig")
