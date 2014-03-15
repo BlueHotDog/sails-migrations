@@ -1,9 +1,8 @@
 --compilers coffee:coffee-script
 --require chai
---require coffee-script
+--require coffee-script/register
 --require test/specs/spec_helper
 --timeout 20000
 --reporter spec
 --ui bdd
---growl
 --recursive

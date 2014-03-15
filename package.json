@@ -1,12 +1,11 @@
 {
   "name": "sails-migrations",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "The missing, migrations, arm of the octopus",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha test/specs",
-    "postinstall": "cd samples/example_app && npm install && cd ../../"
+    "test": "mocha test/specs"
   },
   "repository": {
     "type": "git",
@@ -22,10 +21,10 @@
   "author": "BlueHotDog",
   "contributors": [
     {
-      "name": "Danni Friedland"
+      "name": "BlueHotDog <dannifriedland@gmail.com> https://twitter.com/DanniFriedland"
     },
     {
-      "name": "Itay Adler"
+      "name": "Itay Adler <itay.adler@gmail.com> https://twitter.com/itayad"
     }
   ],
   "licenses": [
@@ -46,23 +45,23 @@
   "homepage": "https://github.com/BlueHotDog/sails-migrations",
   "dependencies": {
     "waterline": "~0.9",
-    "coffee-script": "~1.6",
+    "coffee-script": "~1.7",
     "grunt": "~0.4",
     "gake": "~0.1",
     "lodash": "~2.4",
-    "bluebird": "~1.0",
     "glob": "~3.2",
     "dot": "~1.0",
     "moment": "~2.5",
     "underscore.string": "~2.3",
     "mkdirp": "~0.3",
     "simplesets": "~1.2",
-    "async": "~0.2"
+    "async": "~0.2",
+    "bluebird": "~1.1"
   },
   "peerDependencies": {
     "grunt": "~0.4",
     "gake": "",
-    "sails": "~0.9"
+    "sails": ">= 0.9 < 1"
   },
   "devDependencies": {
     "mocha": "~1.16",

@@ -10,6 +10,9 @@ SchemaMigration = Waterline.Collection.extend({
   migrate: 'safe'
   autoCreatedAt: false
   autoUpdatedAt: false
+#  schema: false
+#  autoPK: true
+#  adapter: 'adapter'
   attributes:
     version:
       type: 'STRING'

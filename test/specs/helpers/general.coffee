@@ -6,12 +6,12 @@ SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
 
 class General
-  @modulesPath: path.resolve("samples/example_app/node_modules")
-  @migrationsPath = path.resolve('samples/example_app/db/migrations')
+  @modulesPath: (version="")->path.resolve("samples/example_app#{version}/node_modules")
+  @migrationsPath = (version="")->path.resolve("samples/example_app#{version}/db/migrations")
 
-  @getAdapter: ->
+  @getAdapter: (version="")->
     resolver = Promise.defer()
-    SailsIntegration.loadSailsConfig(@modulesPath, (err, config)=>
+    SailsIntegration.loadSailsConfig(@modulesPath(version), (err, config)=>
       return resolver.reject(err) if err
       resolver.resolve(config.defaultAdapter)
     )
@@ -20,8 +20,8 @@ class General
   @getOurAdapter: ->
     @getAdapter().then((adapter)-> new AdapterWrapper(adapter))
 
-  @recreateSchemaTable: ->
-    @getAdapter().then((adapter)->
+  @recreateSchemaTable: (version="")->
+    @getAdapter(version).then((adapter)->
       resolver = Promise.defer()
       SchemaMigration.drop(adapter, ->
         SchemaMigration.define(adapter, resolver.callback)
@@ -29,14 +29,14 @@ class General
       resolver.promise
     )
 
-  @recreateDatabase: ->
+  @recreateDatabase: (version="")->
     resolver = Promise.defer()
     resetDb = (adapter)=>
       DatabaseTasks.drop(adapter, =>
         DatabaseTasks.create(adapter, resolver.callback)
       )
 
-    @getAdapter().done(resetDb)
+    @getAdapter(version).done(resetDb)
     resolver.promise
 
 

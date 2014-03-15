@@ -3,4 +3,7 @@ language: node_js
 node_js:
   - "0.10"
 before_script:
-  - cp samples/example_app/config/adapters.{travis.temp,js}
+  - cp samples/example_app0.9.8/config/adapters.{travis.temp,js}
+  - cd samples/example_app0.9.8 && npm install && cd ../../
+  - cp samples/example_app0.10/config/connections.{travis.temp,js}
+  - cd samples/example_app0.10 && npm install && cd ../../

@@ -12,4 +12,5 @@ logs
 results
 npm-debug.log
 node_modules
-test/example_app/db/
+samples/example_app0.9.8/db/**/*
+samples/example_app0.10/db/**/*

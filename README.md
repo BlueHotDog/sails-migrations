@@ -16,6 +16,12 @@ To install run:
 ```bash
 npm install --save sails-migrations
 ```
+
+and add the following line to your Gruntfile.js
+
+```javascript
+grunt.loadNpmTasks('sails-migrations');
+```
 ## Example app
 
 You can checkout an [example Sails](https://github.com/itayadler/sails-migrations-testapp).
