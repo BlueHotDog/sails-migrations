@@ -8,6 +8,10 @@
 sails-migrations provides an easy way to manage database migrations, much like Rails does.
 This means you can have fine-grained control over your schema/data transformations between versions.
 
+## Supported sails versions:
+
+sails-migrations should work with both the stable 0.9x branch and the upcoming 0.10 release, please let us know if you encounter any problem working with sails-migrations by opening an issue.
+
 ## Installing:
 
 sails-migrations' only dependencies are Sails and mysql/postgres (currently) adapters,
