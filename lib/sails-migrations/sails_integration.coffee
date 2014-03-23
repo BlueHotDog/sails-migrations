@@ -1,5 +1,11 @@
 path = require('path')
 
+getSailsVersion = (sailsObject)->
+  if sailsObject.config.adapters
+    "0.9"
+  else
+    "0.10"
+
 class SailsIntegration
   cache= null
 
@@ -21,10 +27,18 @@ class SailsIntegration
     )
 
   @getSailsConfig: (modulesPath, sails)->
-    defaultAdapterName =  sails.config.adapters.default
-    dbConfig = sails.config.adapters[defaultAdapterName]
+    switch getSailsVersion(sails)
+      when "0.9"
+        defaultAdapterName =  sails.config.adapters.default
+        dbConfig = sails.config.adapters[defaultAdapterName]
+        moduleName = dbConfig.module
+      when "0.10"
+        defaultAdapterName =  sails.config.models.connection
+        dbConfig = sails.config.connections[defaultAdapterName]
+        moduleName = dbConfig.adapter
 
-    adapter = require(path.join(modulesPath, dbConfig.module))
+
+    adapter = require(path.join(modulesPath, moduleName))
     adapter.config = dbConfig
 
     {
@@ -33,6 +47,5 @@ class SailsIntegration
       defaultAdapter: adapter
       sailsPath: sailsPath(modulesPath)
     }
-
 
 module.exports = SailsIntegration
