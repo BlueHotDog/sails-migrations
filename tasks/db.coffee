@@ -21,6 +21,7 @@ module.exports = (grunt) ->
     databaseTasks.create(config.defaultAdapter, (err)->
       return grunt.fail.fatal(err) if err
       grunt.log.oklns("Database created successfully")
+      done()
     )
   )
 
