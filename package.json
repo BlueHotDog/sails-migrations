@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/BlueHotDog/sails-migrations",
   "dependencies": {
-    "waterline": "~0.9",
+    "waterline": "git://github.com/balderdashy/waterline.git",
     "coffee-script": "~1.7",
     "grunt": "~0.4",
     "gake": "~0.1",
@@ -56,7 +56,7 @@
     "mkdirp": "~0.3",
     "simplesets": "~1.2",
     "async": "~0.2",
-    "bluebird": "~1.1"
+    "bluebird": "^1.1.0"
   },
   "peerDependencies": {
     "grunt": "~0.4",

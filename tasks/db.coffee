@@ -20,16 +20,18 @@ module.exports = (grunt) ->
 
     grunt.log.writeln("Trying to create a new database")
 
-    databaseTasks.create(config.defaultAdapter, (err)->
-      return grunt.fail.fatal(err) if err
-      grunt.log.oklns("Database created successfully")
+#    databaseTasks.create(config.defaultAdapter, (err)->
+#      return grunt.fail.fatal(err) if err
+#      grunt.log.oklns("Database created successfully")
+#
+#
+#    )
 
-      grunt.log.writeln("Creating version table")
-      schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
-        return grunt.fail.fatal(err) if err
-        grunt.log.oklns("table created successfully")
-        done()
-      )
+    grunt.log.writeln("Creating version table")
+    schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
+      return grunt.fail.fatal(err) if err
+      grunt.log.oklns("table created successfully")
+      done()
     )
   )
 
