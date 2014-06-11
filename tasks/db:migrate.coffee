@@ -16,14 +16,23 @@ module.exports = (grunt, done) ->
     adapter = config.defaultAdapter
     targetVersion = grunt.option('version')
 
-    Migrator = grunt.helpers.loadLibModule('migrator')
-    Migrator.migrate(adapter, migrationsPath, targetVersion, (err, migrations, failedMigration)->
-      _.each(migrations, (migration)->
-        grunt.log.oklns("Migrated #{migration.name()} #{migration.version()}")
-      )
-      if failedMigration
-        grunt.fail.fatal("Failed to migrate #{failedMigration.name()} #{failedMigration.version()} error: #{err}")
+
+    MigratorHelper = grunt.helpers.loadLibModule('migrator_helper')
+    migrator = MigratorHelper.getMigrator(adapter, {
+      path: migrationsPath
+    })
+
+    options = {
+      logging: grunt.log.oklns
+      method: 'up'
+    }
+    options.to = targetVersion if targetVersion?
+    migrator.migrate(options).success(->
       done()
+    ).error((error)->
+      console.dir(error)
+      grunt.fail.fatal("Failed to migrate,\terror: #{error}")
+      done(error)
     )
   )
 
@@ -35,16 +44,23 @@ module.exports = (grunt, done) ->
 
     migrationsPath = config.migrationOutDir
     adapter = config.defaultAdapter
-    steps = grunt.option('steps')
+    targetVersion = grunt.option('version')
 
-    Migrator = grunt.helpers.loadLibModule('migrator')
-    Migrator.rollback(adapter, migrationsPath, steps, (err, migrations, failedMigration)->
-      _.each(migrations, (migration)->
-        grunt.log.oklns("Rolling back #{migration.name()} #{migration.version()}")
-      )
-      if failedMigration
-        grunt.fail.fatal("Failed to rollback #{failedMigration.name()} #{failedMigration.version()} error: #{err}")
+
+    MigratorHelper = grunt.helpers.loadLibModule('migrator_helper')
+    migrator = MigratorHelper.getMigrator(adapter, {
+      path: migrationsPath
+    })
+
+    options = {
+      logging: grunt.log.oklns
+      method: 'down'
+    }
+    options.to = targetVersion if targetVersion?
+    migrator.migrate(options).success(->
       done()
+    ).error((error)->
+      throw error
     )
   )
 

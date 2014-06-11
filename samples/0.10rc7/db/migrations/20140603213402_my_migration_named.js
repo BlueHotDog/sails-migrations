@@ -1,7 +1,7 @@
 /*
 * Sails migration
 * Using sequelize, please refer to http://sequelizejs.com/docs/latest/migrations for more info
-* Created at {{=it.creationDate}}
+* Created at 2014-06-03T21:34:02+03:00
 * */
 
 module.exports = {

@@ -43,7 +43,6 @@ class SailsIntegration
 
     {
       migrationLibPath: __dirname
-      defaultAdapterName: defaultAdapterName
       defaultAdapter: adapter
       sailsPath: sailsPath(modulesPath)
     }

@@ -44,24 +44,27 @@
   },
   "homepage": "https://github.com/BlueHotDog/sails-migrations",
   "dependencies": {
-    "waterline": "~0.9",
-    "coffee-script": "~1.7",
-    "grunt": "~0.4",
-    "gake": "~0.1",
-    "lodash": "~2.4",
-    "glob": "~3.2",
-    "dot": "~1.0",
-    "moment": "~2.5",
-    "underscore.string": "~2.3",
-    "mkdirp": "~0.3",
-    "simplesets": "~1.2",
     "async": "~0.2",
-    "bluebird": "~1.1"
+    "bluebird": "~1.1",
+    "coffee-script": "~1.7",
+    "dot": "~1.0",
+    "gake": "~0.1",
+    "glob": "~3.2",
+    "grunt": "~0.4",
+    "lodash": "~2.4",
+    "mkdirp": "~0.3",
+    "moment": "~2.5",
+    "mysql": "^2.3.2",
+    "pg": "^3.2.0",
+    "sequelize": "git@github.com:BlueHotDog/sequelize.git",
+    "simplesets": "~1.2",
+    "underscore.string": "~2.3",
+    "waterline": "~0.9"
   },
   "peerDependencies": {
     "grunt": "~0.4",
     "gake": "",
-    "sails": ">= 0.9 < 1"
+    "sails": "~0.10"
   },
   "devDependencies": {
     "mocha": "~1.16",

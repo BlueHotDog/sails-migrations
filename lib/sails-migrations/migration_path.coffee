@@ -41,11 +41,4 @@ class Migration
 
   @nextMigrationNumber: -> moment().format('YYYYMMDDHHmmss')
 
-  @basePath: ->
-    '/vagrant/sails-migrations/test/'
-
-  @migrationsPaths: ->
-    ['/vagrant/sails-migrations/test/db/migrate']
-
-
 module.exports = Migration

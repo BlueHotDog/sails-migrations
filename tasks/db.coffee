@@ -1,11 +1,9 @@
-###
-  Auto generated task by Gake
-  Please visit http://gruntjs.com/ to learn more about how to work with grunt tasks
-###
 dot = require('dot')
 fs = require('fs')
 path = require('path')
 moment = require('moment')
+Sequelize = require('sequelize')
+
 
 module.exports = (grunt) ->
   grunt.registerTask("db:createInternalTask", ->
@@ -16,20 +14,26 @@ module.exports = (grunt) ->
     done = @async()
 
     databaseTasks = grunt.helpers.loadLibModule("database_tasks")
-    schemaMigrationModel = grunt.helpers.loadLibModule("schema_migration")
+    MigratorHelper = grunt.helpers.loadLibModule('migrator_helper')
 
     grunt.log.writeln("Trying to create a new database")
 
-    databaseTasks.create(config.defaultAdapter, (err)->
+    adapter = config.defaultAdapter
+
+    databaseTasks.create(adapter, (err)->
       return grunt.fail.fatal(err) if err
       grunt.log.oklns("Database created successfully")
 
       grunt.log.writeln("Creating version table")
-      schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
-        return grunt.fail.fatal(err) if err
+
+      migrator = MigratorHelper.getMigrator(adapter, {
+        path: config.migrationOutDir
+      })
+
+      migrator.findOrCreateSequelizeMetaDAO().success(->
         grunt.log.oklns("table created successfully")
         done()
-      )
+      ).error(grunt.fail.fatal)
     )
   )
 
