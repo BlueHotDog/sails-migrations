@@ -56,7 +56,7 @@ rollbackScope = (adapter, migrationsPath, scope, steps, withMigrate, cb)->
 rollbackScopeDefault = (adapter, migrationsPath, scope, withMigrate, cb)->
   rollbackScope(adapter, migrationsPath, scope, null, withMigrate, cb)
 
-['0.9.8', '0.9.16'].forEach((version)=>
+['0.9.8', '0.9.16', '0.10-rc8'].forEach((version)=>
   migrationsPath = GeneralHelper.migrationsPath(version)
   describe "integration for version #{version}", ->
     describe 'migration', ->
