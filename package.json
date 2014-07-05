@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha test/specs"
+    "test": "SAILS_VERSION=0.9.8 mocha test/specs && SAILS_VERSION=0.9.16 mocha test/specs && SAILS_VERSION=0.10-rc8 mocha test/specs"
   },
   "repository": {
     "type": "git",

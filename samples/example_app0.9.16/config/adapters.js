@@ -14,7 +14,7 @@
 
 module.exports.adapters = {
 
-  'default': 'mysql',
+  'default': 'postgresql',
 
   mysql: {
     module: 'sails-mysql',
@@ -22,6 +22,12 @@ module.exports.adapters = {
     port: 3306,
     user: 'root',
     password: '',
-    database: 'sails_sample_0_9_16'
+    database: 'sails_migrations_test_0916'
+  },
+  postgresql: {
+    module: 'sails-postgresql',
+    host: 'localhost',
+    user: 'itay',
+    database: 'sails_migrations_test_0916'
   }
 };

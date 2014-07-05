@@ -1,4 +1,5 @@
 path = require('path')
+_ = require('lodash')
 
 getSailsVersion = (sailsObject)->
   if sailsObject.config.adapters
@@ -22,7 +23,7 @@ class SailsIntegration
     sails = require(sailsPath(modulesPath))
     sails.load(options, (err)=>
       return cb(err) if err
-      cache = @getSailsConfig(modulesPath, sails);
+      cache = @getSailsConfig(modulesPath, sails)
       return cb(null, cache)
     )
 
@@ -36,7 +37,6 @@ class SailsIntegration
         defaultAdapterName =  sails.config.models.connection
         dbConfig = sails.config.connections[defaultAdapterName]
         moduleName = dbConfig.adapter
-
 
     adapter = require(path.join(modulesPath, moduleName))
     adapter.config = dbConfig

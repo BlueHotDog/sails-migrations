@@ -19,7 +19,12 @@ class DatabaseTasks
           cb(err, adapter)
         )
       when 'sails-postgresql'
-        exec("createdb #{adapter.config.database}", cb)
+        exec("createdb #{adapter.config.database}", (err)=>
+          if err?.toString().match(/already exists/)
+            cb(null, adapter)
+          else
+            cb(err, adapter)
+        )
 
   @migrationsPath: ->
     #TODO: sails should have something similar to rails Rails.application.paths['db/migrate'].to_a
@@ -29,9 +34,20 @@ class DatabaseTasks
     switch adapter.identity
       when 'sails-mysql'
         @executeQuery(adapter, "DROP DATABASE #{adapter.config.database}", (err, stdout, stdin)->
-          return cb(err, adapter)
+          cb(err, adapter)
         )
       when 'sails-postgresql'
-        exec("dropdb #{adapter.config.database}", cb)
+        exec("dropdb #{adapter.config.database}", (err)=>
+          cb(err, adapter)
+        )
+
+  @dropSchema: (adapter, cb)->
+    switch adapter.identity
+      when 'sails-mysql'
+        @drop(adapter, cb)
+      when 'sails-postgresql'
+        @executeQuery(adapter, "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;", (err, stdout, stdin)->
+          cb(err, adapter)
+        )
 
 module.exports = DatabaseTasks

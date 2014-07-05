@@ -24,7 +24,8 @@
     "grunt-contrib-coffee": "~0.10.1",
     "gake": "~0.1.2",
     "sails-migrations": "0.0.4",
-    "sails-mysql": "~0.9.10"
+    "sails-mysql": "~0.9.10",
+    "sails-postgresql": "~0.9.7"
   },
   "scripts": {
     "start": "node app.js",
