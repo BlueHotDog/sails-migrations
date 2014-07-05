@@ -1,9 +1,10 @@
 path = require('path')
+errors = rek('lib/sails-migrations/errors')
 Promise = require('bluebird')
-SailsIntegration = rek("lib/sails-migrations/sails_integration.coffee")
-AdapterWrapper = rek("lib/sails-migrations/adapter_wrapper.coffee")
+AdapterWrapper = rek('lib/sails-migrations/adapter_wrapper.coffee')
 SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
+SailsIntegration = rek('lib/sails-migrations/sails_integration.coffee')
 
 class General
   @modulesPath: (version="")->path.resolve("samples/example_app#{version}/node_modules")
@@ -31,12 +32,19 @@ class General
 
   @recreateDatabase: (version="")->
     resolver = Promise.defer()
+    dropSchema = Promise.promisify(DatabaseTasks.dropSchema.bind(DatabaseTasks))
+    create = Promise.promisify(DatabaseTasks.create.bind(DatabaseTasks))
     resetDb = (adapter)=>
-      DatabaseTasks.drop(adapter, =>
-        DatabaseTasks.create(adapter, resolver.callback)
-      )
+      dropSchema(adapter).then(create)
 
-    @getAdapter(version).done(resetDb)
+    @getAdapter(version)
+      .then((adapter)->
+        resetDb(adapter)
+      ).then((adapter)->
+        resolver.resolve(adapter)
+      ).catch(errors.DatabaseAlreadyExists, (err)->
+        resolver.resolve(err.adapter)
+      )
     resolver.promise
 
 

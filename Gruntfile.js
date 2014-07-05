@@ -1,4 +1,3 @@
-
 module.exports = function (grunt) {
   var config = {
     pkg: grunt.file.exists('package.json') ? grunt.file.readJSON('package.json') : {},
@@ -11,6 +10,5 @@ module.exports = function (grunt) {
   };
 
   grunt.initConfig(config);
-  //grunt.loadNpmTasks('gake');
   grunt.registerTask('default', []);
 };

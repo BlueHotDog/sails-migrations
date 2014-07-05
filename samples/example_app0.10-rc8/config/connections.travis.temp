@@ -35,12 +35,18 @@ module.exports.connections = {
   // Run:
   // npm install sails-mysql
   //
-  mysqlTest: {
+  mysql: {
     adapter: 'sails-mysql',
     host: 'localhost',
     user: 'travis',
     password: '',
     database: 'test_app_dev'
+  },
+  postgresql: {
+    adapter: 'sails-postgresql',
+    host: 'localhost',
+    user: 'postgres',
+    database: 'travis_ci_test'
   },
 
   // MongoDB is the leading NoSQL database.

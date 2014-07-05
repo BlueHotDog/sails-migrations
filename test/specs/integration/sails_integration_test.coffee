@@ -1,6 +1,7 @@
 # We're forcing module.require to reload the file here to prevent cached state from previous tests.
 
 path = require('path')
+
 version = process.env.SAILS_VERSION
 SailsIntegration = rek('lib/sails-migrations/sails_integration.coffee', true)
 describe "SailsIntegration v#{version}", ->
@@ -25,7 +26,7 @@ describe "SailsIntegration v#{version}", ->
               done()
             )
 
-        context 'when there is no error', ->
+        context 'when there is no `error', ->
           beforeEach ->
             sandbox.stub(@Sails, 'load').yields()
 

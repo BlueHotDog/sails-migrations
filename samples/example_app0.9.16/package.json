@@ -11,7 +11,8 @@
     "sails": "^0.9.16",
     "sails-disk": "~0.9.0",
     "sails-migrations": "0.0.4",
-    "sails-mysql": "^0.9.10"
+    "sails-mysql": "^0.9.10",
+    "sails-postgresql": "~0.9.7"
   },
   "scripts": {
     "start": "node app.js",

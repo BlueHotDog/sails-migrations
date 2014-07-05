@@ -35,11 +35,17 @@ module.exports.connections = {
   // Run:
   // npm install sails-mysql
   //
-  mysqlTest: {
+  mysql: {
     adapter: 'sails-mysql',
     host: 'localhost',
     user: 'root',
     password: '',
+    database: 'sails_migrations_010rc8'
+  },
+
+  postgresql: {
+    adapter: 'sails-postgresql',
+    host: 'localhost',
     database: 'sails_migrations_010rc8'
   },
 

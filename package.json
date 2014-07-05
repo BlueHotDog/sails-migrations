@@ -1,11 +1,11 @@
 {
   "name": "sails-migrations",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "The missing, migrations, arm of the octopus",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha test/specs"
+    "test": "./run_tests.sh"
   },
   "repository": {
     "type": "git",
