@@ -2,7 +2,7 @@
 
 path = require('path')
 
-['0.9.8','0.10'].forEach((version)=>
+['0.9.8','0.9.16'].forEach((version)=>
   SailsIntegration = rek('lib/sails-migrations/sails_integration.coffee', true)
   describe "SailsIntegration v#{version}", ->
       sandbox = sinon.sandbox.create()
