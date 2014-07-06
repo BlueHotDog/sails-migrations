@@ -1,5 +1,7 @@
 exec = require('child_process').exec
 _ = require('lodash')
+errors = require('./errors')
+
 LOCAL_HOSTS = ['127.0.0.1', 'localhost']
 class DatabaseTasks
   @executeQuery = (adapter, query, cb) ->
@@ -21,7 +23,7 @@ class DatabaseTasks
       when 'sails-postgresql'
         exec("createdb #{adapter.config.database}", (err)=>
           if err?.toString().match(/already exists/)
-            cb(null, adapter)
+            cb(new errors.DatabaseAlreadyExists(err, adapter), adapter)
           else
             cb(err, adapter)
         )
