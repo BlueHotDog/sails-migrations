@@ -8,11 +8,11 @@ env:
   - SAILS_ADAPTER_NAME=postgresql
   - SAILS_ADAPTER_NAME=mysql
 before_script:
-  - npm install -g grunt-cli
+  - npm link
   - cp samples/example_app0.9.8/config/adapters.{travis.temp,js}
-  - npm link && cd samples/example_app0.9.8 && npm link sails-migrations && npm install && cd ../../
+  - cd samples/example_app0.9.8 && npm link sails-migrations && npm install && cd ../../
   - cp samples/example_app0.9.16/config/adapters.{travis.temp,js}
-  - npm link && cd samples/example_app0.9.16 && npm link sails-migrations && npm install && cd ../../
+  - cd samples/example_app0.9.16 && npm link sails-migrations && npm install && cd ../../
   - cp samples/example_app0.10-rc8/config/connections.{travis.temp,js}
   - cp samples/example_app0.10-rc8/config/models.{travis.temp,js}
-  - npm link && cd samples/example_app0.10-rc8 && npm link sails-migrations && npm install && cd ../../
+  - cd samples/example_app0.10-rc8 && npm link sails-migrations && npm install && cd ../../
