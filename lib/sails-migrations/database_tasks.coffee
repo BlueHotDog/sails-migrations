@@ -35,7 +35,7 @@ class DatabaseTasks
   @drop: (adapter, cb)->
     switch adapter.identity
       when 'sails-mysql'
-        @executeQuery(adapter, "DROP DATABASE #{adapter.config.database}", (err, stdout, stdin)->
+        @executeQuery(adapter, "DROP DATABASE IF EXISTS #{adapter.config.database}", (err, stdout, stdin)->
           cb(err, adapter)
         )
       when 'sails-postgresql'
@@ -48,8 +48,13 @@ class DatabaseTasks
       when 'sails-mysql'
         @drop(adapter, cb)
       when 'sails-postgresql'
-        @executeQuery(adapter, "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;", (err, stdout, stdin)->
-          cb(err, adapter)
+        exec("psql -l | grep #{adapter.config.database} | wc -l", (err, stdout, stdin)=>
+          if stdout.match("1")
+            @executeQuery(adapter, "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;", (err, stdout, stdin)->
+              cb(err, adapter)
+            )
+          else
+            cb(err, adapter)
         )
 
 module.exports = DatabaseTasks
