@@ -9,23 +9,31 @@ class General
   @modulesPath: (version="")->path.resolve("samples/example_app#{version}/node_modules")
   @migrationsPath = (version="")->path.resolve("samples/example_app#{version}/db/migrations")
 
-  @getAdapter: (version="")->
+  @getConfig: (version="", withModels = true)->
     resolver = Promise.defer()
-    SailsIntegration.loadSailsConfig(@modulesPath(version), (err, config)=>
+    SailsIntegration.loadSailsConfig(@modulesPath(version), withModels, (err, config)=>
       return resolver.reject(err) if err
       resolver.resolve(config)
     )
     resolver.promise
 
   @getOurAdapter: ->
-    @getAdapter().then((config)-> new AdapterWrapper(config.defaultAdapter))
+    @getConfig().then((config)-> new AdapterWrapper(config.defaultAdapter))
 
   @recreateSchemaTable: (version="")->
-    @getAdapter(version).then((config)->
+    SailsIntegration.invalidateCache()
+    @getConfig(version).then((config)->
       resolver = Promise.defer()
       SchemaMigration = config.schema_migration
       SchemaMigration.drop(->
-        SchemaMigration.define(resolver.callback)
+        versionAttributes =
+          version:
+            type: 'STRING'
+            primaryKey: true
+            required: true
+            index: true
+        console.log(SchemaMigration.attributes, SchemaMigration)
+        SchemaMigration.define(versionAttributes, resolver.callback)
       )
       resolver.promise
     )
@@ -37,11 +45,11 @@ class General
     resetDb = (adapter)=>
       dropSchema(adapter).then(create)
 
-    @getAdapter(version)
-      .then((adapter)->
-        resetDb(adapter)
-      ).then((adapter)->
-        resolver.resolve(adapter)
+    @getConfig(version, false)
+      .then((config)->
+        resetDb(config.defaultAdapter)
+      ).then((config)->
+        resolver.resolve(config.defaultAdapter)
       ).catch(errors.DatabaseAlreadyExists, (err)->
         resolver.resolve(err.adapter)
       )

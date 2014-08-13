@@ -63,11 +63,10 @@ describe "integration for version #{version}", ->
     beforeEach (done)->
       # reset the migrations folder
       rmdirp.sync(migrationsPath)
-      temp = GeneralHelper.recreateDatabase(version)
-      temp.then((adapter)=>
+      GeneralHelper.recreateDatabase(version).then((adapter)=>
         @adapter = adapter
         @AdapterWrapper = new AdapterWrapper(adapter)
-        GeneralHelper.recreateSchemaTable(version).then(->done())
+        GeneralHelper.recreateSchemaTable(version).then(done)
       )
 
     describe 'db:migrate', ->

@@ -13,21 +13,21 @@ class SailsIntegration
   sailsPath = (modulesPath) ->
     path.join(modulesPath, 'sails')
 
-  @loadSailsConfig: (modulesPath, cb)->
-    console.log 'cache', cache
+  @loadSailsConfig: (modulesPath, withModels, cb)->
     return cb(null, cache) if cache
+
     options =
-      paths:
-        models: path.join(__dirname, 'models')
       globals: false
       loadHooks: ['moduleloader', 'userconfig', 'orm']
       appPath: path.join(modulesPath, "..")
 
-    sails = require(sailsPath(modulesPath))
+    options.paths = models: path.join(__dirname, 'models') if withModels
+
+    sails = new require(sailsPath(modulesPath)).Sails()
     sails.load(options, (err)=>
       return cb(err) if err
       cache = @getSailsConfig(modulesPath, sails)
-      return cb(null, cache)
+      cb(null, cache)
     )
 
   @getSailsConfig: (modulesPath, sails)->
@@ -51,5 +51,8 @@ class SailsIntegration
       sailsPath: sailsPath(modulesPath)
       schema_migration: sails.models.schema_migration
     }
+
+  @invalidateCache: ()->
+    cache = null
 
 module.exports = SailsIntegration

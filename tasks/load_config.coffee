@@ -18,7 +18,7 @@ module.exports = (grunt) ->
       baseAppPath = process.cwd()
 
     modulesPath = path.join(baseAppPath, 'node_modules')
-    SailsIntegration.loadSailsConfig(modulesPath, (err, config)->
+    SailsIntegration.loadSailsConfig(modulesPath, true, (err, config)->
       return done(err) if err
 
       config = _.extend(config, {

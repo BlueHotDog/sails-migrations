@@ -33,7 +33,7 @@ module.exports = (grunt) ->
     config = grunt.config.get('migration.config')
     done = @async()
 
-    SailsIntegration.loadSailsConfig(modulesPath, (err, config)->
+    SailsIntegration.loadSailsConfig(modulesPath, true, (err, config)->
       schemaMigrationModel = config.schema_migration
       grunt.log.writeln("Creating version table")
       schemaMigrationModel.define((err, Model)->

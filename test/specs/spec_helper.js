@@ -1,5 +1,7 @@
 process.env.NODE_ENV = "test";
 process.env.SAILS_VERSION = process.env.SAILS_VERSION || "0.10-rc8";
+require('longjohn');
+
 chai = require('chai');
 sinon = require('sinon');
 path = require('path');

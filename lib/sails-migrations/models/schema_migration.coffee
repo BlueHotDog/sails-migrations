@@ -29,11 +29,9 @@ SchemaMigration = Waterline.Collection.extend({
       models[0].destroy(cb)
     )
 
-  drop: (cb)->
-    @drop(cb)
-
   define: (cb)->
-    @define(cb)
+    console.log 'define'
+    @define(@attributes, cb)
 })
 
 module.exports = SchemaMigration

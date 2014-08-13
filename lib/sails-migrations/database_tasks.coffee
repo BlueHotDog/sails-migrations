@@ -12,7 +12,10 @@ class DatabaseTasks
         exec("mysql -h #{adapter.config.host} -u #{adapter.config.user} #{passwordField} -e '#{query}'", cb)
       when 'sails-postgresql'
         # use .pgpass or no password
-        exec("psql -h #{adapter.config.host} -U #{adapter.config.user} -d #{adapter.config.database} -c '#{query}'", cb)
+        username = ""
+        username = "-U #{adapter.config.user}" unless _.isEmpty(adapter.config.user)
+        query = "psql -h #{adapter.config.host} #{username} -d #{adapter.config.database} -c '#{query}'"
+        exec(query, cb)
 
   @create: (adapter, cb)->
     switch adapter.identity

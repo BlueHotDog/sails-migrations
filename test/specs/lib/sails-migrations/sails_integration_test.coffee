@@ -19,7 +19,7 @@ describe "SailsIntegration v#{version}", ->
             sandbox.stub(@Sails, 'load').yields('some err')
 
           it 'should return the error', (done)->
-            SailsIntegration.loadSailsConfig(@modulesPath, (err, config)->
+            SailsIntegration.loadSailsConfig(@modulesPath, true, (err, config)->
               expect(err).to.equal('some err')
               expect(config).to.be.empty
               done()
@@ -31,7 +31,7 @@ describe "SailsIntegration v#{version}", ->
 
           it 'should get config', (done)->
             sandbox.mock(SailsIntegration).expects('getSailsConfig').once()
-            SailsIntegration.loadSailsConfig(@modulesPath, done)
+            SailsIntegration.loadSailsConfig(@modulesPath, true, done)
 
       describe 'second call', ->
         beforeEach ->
@@ -39,8 +39,8 @@ describe "SailsIntegration v#{version}", ->
 
         it 'should return cache', (done)->
           mock = sandbox.mock(SailsIntegration).expects('getSailsConfig').once().returns(a: 3)
-          SailsIntegration.loadSailsConfig(@modulesPath, (err, config)=>
-            SailsIntegration.loadSailsConfig(@modulesPath, (err, config)=>
+          SailsIntegration.loadSailsConfig(@modulesPath, true, (err, config)=>
+            SailsIntegration.loadSailsConfig(@modulesPath, true, (err, config)=>
               expect(config).to.deep.equal(a: 3)
               mock.verify()
               done()

@@ -4,7 +4,10 @@
     <option name="compassSupportEnabled" value="true" />
   </component>
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/samples/example_app0.9.16/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/samples/example_app0.9.8/node_modules" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
