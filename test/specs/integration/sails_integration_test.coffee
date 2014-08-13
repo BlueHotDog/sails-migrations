@@ -52,6 +52,7 @@ describe "SailsIntegration v#{version}", ->
       before ->
         @sailsWithConfig =
           config:
+            models: path.resolve('.', 'lib/sails-migrations/models')
             adapters:
               default: 'defaultAdapter'
               defaultAdapter:
@@ -59,4 +60,4 @@ describe "SailsIntegration v#{version}", ->
 
       it 'should return the correct config', ->
         config = SailsIntegration.getSailsConfig(@modulesPath, @sailsWithConfig)
-        expect(config).to.have.keys(['migrationLibPath','defaultAdapterName','defaultAdapter', 'sailsPath'])
+        expect(config).to.have.keys(['migrationLibPath','defaultAdapterName','defaultAdapter', 'sailsPath', 'schema_migration'])

@@ -8,14 +8,17 @@ getSailsVersion = (sailsObject)->
     "0.10"
 
 class SailsIntegration
-  cache= null
+  cache = null
 
   sailsPath = (modulesPath) ->
     path.join(modulesPath, 'sails')
 
   @loadSailsConfig: (modulesPath, cb)->
+    console.log 'cache', cache
     return cb(null, cache) if cache
     options =
+      paths:
+        models: path.join(__dirname, 'models')
       globals: false
       loadHooks: ['moduleloader', 'userconfig', 'orm']
       appPath: path.join(modulesPath, "..")
@@ -46,6 +49,7 @@ class SailsIntegration
       defaultAdapterName: defaultAdapterName
       defaultAdapter: adapter
       sailsPath: sailsPath(modulesPath)
+      schema_migration: sails.models.schema_migration
     }
 
 module.exports = SailsIntegration

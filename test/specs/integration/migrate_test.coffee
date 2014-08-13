@@ -6,7 +6,7 @@ mkdirp = require('mkdirp')
 rmdirp = require('../helpers/rmdirp.coffee')
 GeneralHelper = require("../helpers/general.coffee")
 CustomAssertions = require("../helpers/custom_assertions.coffee")
-SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
+SchemaMigration = rek("lib/sails-migrations/models/schema_migration.coffee")
 
 Migrator = rek("lib/sails-migrations/migrator.coffee")
 AdapterWrapper = rek("lib/sails-migrations/adapter_wrapper.coffee")

@@ -28,16 +28,19 @@ module.exports = (grunt) ->
   grunt.registerTask("db:createVersionTable", ->
     @requires("db:loadConfig")
     @requiresConfig("migration.config")
+    SailsIntegration = require('../lib/sails-migrations/sails_integration')
 
     config = grunt.config.get('migration.config')
     done = @async()
 
-    schemaMigrationModel = grunt.helpers.loadLibModule("schema_migration")
-    grunt.log.writeln("Creating version table")
-    schemaMigrationModel.define(config.defaultAdapter, (err, Model)->
-      return grunt.fail.fatal(err) if err
-      grunt.log.oklns("version table created successfully")
-      done()
+    SailsIntegration.loadSailsConfig(modulesPath, (err, config)->
+      schemaMigrationModel = config.schema_migration
+      grunt.log.writeln("Creating version table")
+      schemaMigrationModel.define((err, Model)->
+        return grunt.fail.fatal(err) if err
+        grunt.log.oklns("version table created successfully")
+        done()
+      )
     )
   )
 
@@ -54,7 +57,7 @@ module.exports = (grunt) ->
 
     databaseTasks = require(path.join(config.migrationLibPath, "database_tasks"))
     grunt.log.writeln("Trying to drop the database")
-    databaseTasks.drop(config.defaultAdapter, (err)->
+    databaseTasks.drop((err)->
       return grunt.fail.fatal(err) if err
       grunt.log.oklns("Database dropped sucessfully")
       done()

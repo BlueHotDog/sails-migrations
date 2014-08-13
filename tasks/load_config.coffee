@@ -26,7 +26,7 @@ module.exports = (grunt) ->
         templatesPath: path.join(__dirname, 'templates')
       })
 
-      grunt.config.set('migration.config', config)
+      grunt.config.set('migration.config', _.omit(config, 'schema_migration'))
 
       done()
     )

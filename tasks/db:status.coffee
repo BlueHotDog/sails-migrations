@@ -11,7 +11,7 @@ module.exports = (grunt) ->
     @requiresConfig('migration.config')
 
     config = grunt.config.get('migration.config')
-    SchemaMigration = grunt.helpers.loadLibModule("schema_migration")
+    SchemaMigration = grunt.helpers.loadLibModule("models/schema_migration")
 
     SchemaMigration.getInstance(config.defaultAdapter, (err, Model)->
       grunt.log.writeln("Checking if #{SchemaMigration::tableName} exists")
@@ -29,7 +29,7 @@ module.exports = (grunt) ->
     @requiresConfig('migration.config')
 
     config = grunt.config.get('migration.config')
-    SchemaMigration = grunt.helpers.loadLibModule("schema_migration")
+    SchemaMigration = grunt.helpers.loadLibModule("models/schema_migration")
     MigrationPath = grunt.helpers.loadLibModule("migration_path")
     fileList = []
 

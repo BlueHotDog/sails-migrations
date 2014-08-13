@@ -16,7 +16,7 @@ module.exports = (grunt, done) ->
     adapter = config.defaultAdapter
     targetVersion = grunt.option('version')
 
-    Migrator = grunt.helpers.loadLibModule('migrator')
+    Migrator = grunt.helpers.loadLibModule('migrator')(config.schema_migration)
     Migrator.migrate(adapter, migrationsPath, targetVersion, (err, migrations, failedMigration)->
       _.each(migrations, (migration)->
         grunt.log.oklns("Migrated #{migration.name()} #{migration.version()}")
@@ -37,7 +37,7 @@ module.exports = (grunt, done) ->
     adapter = config.defaultAdapter
     steps = grunt.option('steps')
 
-    Migrator = grunt.helpers.loadLibModule('migrator')
+    Migrator = grunt.helpers.loadLibModule('migrator')(config.schema_migration)
     Migrator.rollback(adapter, migrationsPath, steps, (err, migrations, failedMigration)->
       _.each(migrations, (migration)->
         grunt.log.oklns("Rolling back #{migration.name()} #{migration.version()}")

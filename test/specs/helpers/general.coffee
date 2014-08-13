@@ -2,7 +2,6 @@ path = require('path')
 errors = rek('lib/sails-migrations/errors')
 Promise = require('bluebird')
 AdapterWrapper = rek('lib/sails-migrations/adapter_wrapper.coffee')
-SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
 DatabaseTasks = rek('lib/sails-migrations/database_tasks.coffee')
 SailsIntegration = rek('lib/sails-migrations/sails_integration.coffee')
 
@@ -14,18 +13,19 @@ class General
     resolver = Promise.defer()
     SailsIntegration.loadSailsConfig(@modulesPath(version), (err, config)=>
       return resolver.reject(err) if err
-      resolver.resolve(config.defaultAdapter)
+      resolver.resolve(config)
     )
     resolver.promise
 
   @getOurAdapter: ->
-    @getAdapter().then((adapter)-> new AdapterWrapper(adapter))
+    @getAdapter().then((config)-> new AdapterWrapper(config.defaultAdapter))
 
   @recreateSchemaTable: (version="")->
-    @getAdapter(version).then((adapter)->
+    @getAdapter(version).then((config)->
       resolver = Promise.defer()
-      SchemaMigration.drop(adapter, ->
-        SchemaMigration.define(adapter, resolver.callback)
+      SchemaMigration = config.schema_migration
+      SchemaMigration.drop(->
+        SchemaMigration.define(resolver.callback)
       )
       resolver.promise
     )

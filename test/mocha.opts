@@ -2,7 +2,7 @@
 --require chai
 --require coffee-script/register
 --require test/specs/spec_helper
---timeout 20000
+--timeout 3000
 --reporter spec
 --ui bdd
 --recursive

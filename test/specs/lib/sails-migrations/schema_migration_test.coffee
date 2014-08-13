@@ -1,5 +1,5 @@
 GeneralHelper = require('../../helpers/general')
-SchemaMigration = rek("lib/sails-migrations/schema_migration.coffee")
+SchemaMigration = rek("lib/sails-migrations/models/schema_migration.coffee")
 Promise = require('bluebird')
 
 describe 'SchemaMigration', ->
