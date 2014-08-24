@@ -1,5 +1,6 @@
 path = require('path')
 _ = require('lodash')
+Promise = require('bluebird')
 
 getSailsVersion = (sailsObject)->
   if sailsObject.config.adapters
@@ -12,6 +13,9 @@ class SailsIntegration
 
   sailsPath = (modulesPath) ->
     path.join(modulesPath, 'sails')
+
+  waterlinePath = (modulesPath)->
+    path.join(sailsPath(modulesPath), 'node_modules', 'waterline')
 
   @loadSailsConfig: (modulesPath, withModels, cb)->
     return cb(null, cache) if cache
@@ -30,6 +34,27 @@ class SailsIntegration
       cb(null, cache)
     )
 
+  @unloadSails: (cb)->
+    return cb(null) unless cache
+    adapterNamesUnique = _.chain(cache.sails.config.connections)
+      .map( (valueConn, connName)->
+        connectionName: connName, adapter: cache.sails.adapters[valueConn.adapter]
+      ).filter( (conn)->
+        conn.adapter
+      ).value()
+
+    teardownAdapters = _.map(adapterNamesUnique, (connObj)->
+      resolver = Promise.defer()
+      adapter = connObj.adapter
+      adapter.teardown(connObj.connectionName, resolver.callback)
+      resolver.promise
+    )
+
+    Promise.all(teardownAdapters).then( (err)=>
+      @invalidateCache()
+      cb()
+    )
+
   @getSailsConfig: (modulesPath, sails)->
     switch getSailsVersion(sails)
       when "0.9"
@@ -41,7 +66,7 @@ class SailsIntegration
         dbConfig = sails.config.connections[defaultAdapterName]
         moduleName = dbConfig.adapter
 
-    adapter = require(path.join(modulesPath, moduleName))
+    adapter = @_loadAdapter(modulesPath, moduleName)
     adapter.config = dbConfig
 
     {
@@ -50,9 +75,15 @@ class SailsIntegration
       defaultAdapter: adapter
       sailsPath: sailsPath(modulesPath)
       schema_migration: sails.models.schema_migration
+      sails: sails
     }
 
-  @invalidateCache: ()->
+  @invalidateCache: ->
     cache = null
+
+  @_loadAdapter: (modulesPath, moduleName)->
+    require(path.join(modulesPath, moduleName))
+
+  @_loadAllAdapters: ->
 
 module.exports = SailsIntegration

@@ -17,24 +17,22 @@ class General
     )
     resolver.promise
 
-  @getOurAdapter: ->
-    @getConfig().then((config)-> new AdapterWrapper(config.defaultAdapter))
+  #Need to go through all the adapters that sails loaded and run teardown on them
+  @teardown: (cb)->
+    SailsIntegration.unloadSails(cb)
+
+  @getOurAdapter: (version)->
+    @getConfig(version).then((config)-> new AdapterWrapper(config.defaultAdapter))
+
+  @getSchemaMigration: (version)->
+    @getConfig(version).then((config)-> config.schema_migration)
 
   @recreateSchemaTable: (version="")->
     SailsIntegration.invalidateCache()
     @getConfig(version).then((config)->
       resolver = Promise.defer()
       SchemaMigration = config.schema_migration
-      SchemaMigration.drop(->
-        versionAttributes =
-          version:
-            type: 'STRING'
-            primaryKey: true
-            required: true
-            index: true
-        console.log(SchemaMigration.attributes, SchemaMigration)
-        SchemaMigration.define(versionAttributes, resolver.callback)
-      )
+      SchemaMigration.define(SchemaMigration.attributes, resolver.callback)
       resolver.promise
     )
 
@@ -49,7 +47,7 @@ class General
       .then((config)->
         resetDb(config.defaultAdapter)
       ).then((config)->
-        resolver.resolve(config.defaultAdapter)
+        resolver.resolve(config.defaultAdapter, config.schema_migration)
       ).catch(errors.DatabaseAlreadyExists, (err)->
         resolver.resolve(err.adapter)
       )

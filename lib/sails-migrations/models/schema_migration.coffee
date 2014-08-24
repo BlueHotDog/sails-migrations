@@ -2,6 +2,12 @@ TABLE_NAME = "sails_schema_migrations"
 
 Waterline = require('waterline')
 _ = require('lodash')
+attributes = 
+  version:
+    type: 'string'
+    primaryKey: true
+    required: true
+    index: true
 
 SchemaMigration = Waterline.Collection.extend({
   tableName: TABLE_NAME
@@ -9,13 +15,11 @@ SchemaMigration = Waterline.Collection.extend({
   autoCreatedAt: false
   autoUpdatedAt: false
   autoPK: false
-  attributes:
-    version:
-      type: 'STRING'
-      primaryKey: true
-      required: true
-      index: true
-      #null: true TODO: how do we validate this?
+  definition: attributes
+  schema: attributes
+  _schema: attributes
+}, {
+  attributes: attributes
 
   getAllVersions: (cb)->
     @find().exec((err, models)=>
@@ -28,10 +32,6 @@ SchemaMigration = Waterline.Collection.extend({
       return cb(err) if err
       models[0].destroy(cb)
     )
-
-  define: (cb)->
-    console.log 'define'
-    @define(@attributes, cb)
 })
 
 module.exports = SchemaMigration

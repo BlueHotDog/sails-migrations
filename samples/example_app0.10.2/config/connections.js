@@ -58,7 +58,6 @@ module.exports.connections = {
   postgresql: {
     adapter: 'sails-postgresql',
     host: 'localhost',
-    user: '',
     database: 'sails_migrations_010_2'
   },
 

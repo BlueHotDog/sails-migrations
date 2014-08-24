@@ -1,7 +1,6 @@
 sets = require('simplesets')
 MigrationPath = require('./migration_path')
 MigrationRunner = require('./migration_runner')
-AdapterWrapper = require('./adapter_wrapper')
 _ = require('lodash')
 Promise = require('bluebird')
 async = require('async')
@@ -21,7 +20,6 @@ module.exports = (SchemaMigration)->
 
       #version ,= migrations.group_by(&:version).find { |_,v| v.length > 1 }
       #raise DuplicateMigrationVersionError.new(version) if version
-
 
     @migrate: (adapter, migrationsPaths, targetVersion, cb)-> 
       if !targetVersion
@@ -46,7 +44,7 @@ module.exports = (SchemaMigration)->
       ).catch(cb)
 
     @currentVersion: (adapter, cb)->
-      SchemaMigration.getAllVersions(adapter, (err, versions)=>
+      SchemaMigration.getAllVersions((err, versions)=>
         return cb(err) if err
 
         if _.isEmpty(versions)
@@ -60,7 +58,7 @@ module.exports = (SchemaMigration)->
       @migrations(migrationsPaths, (err, migrations)=>
         return cb(err) if err
 
-        SchemaMigration.getAllVersions(adapter, (err, versions)=>
+        SchemaMigration.getAllVersions((err, versions)=>
           return cb(err) if err
 
           migrator = new Migrator(adapter, direction, migrations, versions, targetVersion)
@@ -81,7 +79,7 @@ module.exports = (SchemaMigration)->
       resolver = Promise.defer()
       @migrations(migrationsPaths, (err, migrations)=>
         return resolver.reject(err) if err
-        SchemaMigration.getAllVersions(adapter, (err, versions)=>
+        SchemaMigration.getAllVersions((err, versions)=>
           return resolver.reject(err) if err
 
           dummyMigrator = new Migrator(adapter, direction, migrations, versions)
@@ -150,8 +148,7 @@ module.exports = (SchemaMigration)->
       )
 
     executeMigrationInTransaction: (migration, direction, cb)->
-      ourAdapter = new AdapterWrapper(@adapter)
-      migration.migrate(ourAdapter, direction, (err)=>
+      migration.migrate(@adapter, direction, (err)=>
         return cb(err) if err
         @recordVersionStateAfterMigrating(migration.version()).then( (version)->
           cb(null, version)
@@ -162,10 +159,10 @@ module.exports = (SchemaMigration)->
       resolver = Promise.defer()
       if @isDown()
         @migrated.remove(version)
-        Promise.promisify(SchemaMigration.deleteAllByVersion.bind(SchemaMigration))(@adapter, version)
+        Promise.promisify(SchemaMigration.deleteAllByVersion.bind(SchemaMigration))(version)
       else
         @migrated.add(version)
-        SchemaMigration.create(@adapter, { version: version }, (err, model)=>
+        SchemaMigration.create({ version: version }, (err, model)=>
           resolver.reject(err) if err
           resolver.resolve(model)
         )

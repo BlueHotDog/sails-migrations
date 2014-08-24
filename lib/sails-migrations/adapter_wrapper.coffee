@@ -1,43 +1,27 @@
 class Adapter
-  constructor: (@adapter)->
-
-  registerCollection: (tableName, cb)->
-    @adapter.registerCollection({ identity: tableName, config: @adapter.config }, cb)
+  constructor: (@adapter, @connectionName)->
 
   define: (tableName, definition, cb)->
-    @registerCollection(tableName, (err)=>
-      return cb(err) if err
-      @adapter.define(tableName, definition, cb)
-    )
+    @adapter.define(@connectionName, tableName, definition, cb)
 
   drop: (tableName, cb)->
-    @registerCollection(tableName, (err)=>
-      return cb(err) if err
-      @adapter.drop(tableName, cb)
-    )
+    @adapter.drop(tableName, cb)
 
   addAttribute: (tableName, attrName, attrDef, cb)->
-    @registerCollection(tableName, (err)=>
-      return cb(err) if err
-      @adapter.addAttribute(tableName, attrName, attrDef, cb)
-    )
+    @adapter.addAttribute(tableName, attrName, attrDef, cb)
 
   removeAttribute: (tableName, attrName, cb)->
-    @registerCollection(tableName, (err)=>
-      return cb(err) if err
-      @adapter.removeAttribute(tableName, attrName, cb)
-    )
+    @adapter.removeAttribute(tableName, attrName, cb)
 
   query: (query, data, cb)->
     tableName = 'query'
-    @registerCollection(tableName, (err)=>
-      return cb(err) if err
-      @adapter.query(tableName, query, data, cb)
-    )
+    @adapter.query(tableName, query, data, cb)
+
+  teardown: (cb)->
+    debugger
+    @adapter.teardown(@connectionName, cb)
 
   describe: (tableName, cb)->
-    @registerCollection(tableName, (err)=>
-      return cb(err) if err
-      @adapter.describe(tableName, cb)
-    )
+    @adapter.describe(@connectionName, tableName, cb)
+
 module.exports = Adapter
