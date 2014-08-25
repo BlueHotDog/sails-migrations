@@ -34,6 +34,9 @@ class SailsIntegration
       cb(null, cache)
     )
 
+  #Since Sails doesn't allow us to access the waterline instance it uses,
+  #this workaround is implemented to make sure all the open connections
+  #by waterline are closed
   @unloadSails: (cb)->
     return cb(null) unless cache
     adapterNamesUnique = _.chain(cache.sails.config.connections)

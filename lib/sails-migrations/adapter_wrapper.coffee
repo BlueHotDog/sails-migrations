@@ -5,20 +5,19 @@ class Adapter
     @adapter.define(@connectionName, tableName, definition, cb)
 
   drop: (tableName, cb)->
-    @adapter.drop(tableName, cb)
+    @adapter.drop(@connectionName, tableName, cb)
 
   addAttribute: (tableName, attrName, attrDef, cb)->
-    @adapter.addAttribute(tableName, attrName, attrDef, cb)
+    @adapter.addAttribute(@connectionName, tableName, attrName, attrDef, cb)
 
   removeAttribute: (tableName, attrName, cb)->
-    @adapter.removeAttribute(tableName, attrName, cb)
+    @adapter.removeAttribute(@connectionName, tableName, attrName, cb)
 
   query: (query, data, cb)->
     tableName = 'query'
-    @adapter.query(tableName, query, data, cb)
+    @adapter.query(@connectionName, tableName, query, data, cb)
 
   teardown: (cb)->
-    debugger
     @adapter.teardown(@connectionName, cb)
 
   describe: (tableName, cb)->

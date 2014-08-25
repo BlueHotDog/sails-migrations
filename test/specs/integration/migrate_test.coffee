@@ -21,7 +21,6 @@ describe "integration for version #{version}", ->
       ).then(=>
         GeneralHelper.getConfig(version).then((config)=>
           @SchemaMigration = config.schema_migration
-          @sails = config.sails
           @adapter = new AdapterWrapper(config.defaultAdapter, config.defaultAdapterName)
           @Migrator = rek("lib/sails-migrations/migrator.coffee")(@SchemaMigration)
           done()
@@ -153,7 +152,7 @@ describe "integration for version #{version}", ->
           rollbackScope(@adapter, @Migrator, @SchemaMigration, migrationsPath, @tableName, 4, true, (err, versions)=>
             return done(err) if err
             assert.equal(versions.length, 1)
-            CustomAssertions.assertTableColumnCount(@AdapterWrapper, @tableName, 3, done)
+            CustomAssertions.assertTableColumnCount(@adapter, @tableName, 3, done)
           )
   copy = (files, outputPath)->
     _.each(files, (file)->
@@ -184,13 +183,13 @@ describe "integration for version #{version}", ->
     if withMigrate
       migrateScopeDefault(adapter, migrator, schemaMigration, migrationsPath, scope, (err)->
         return cb(err) if err
-        migrator.rollback(adapter, migrator, schemaMigration, migrationsPath, steps, (err)->
+        migrator.rollback(adapter, migrationsPath, steps, (err)->
           return cb(err) if err
           schemaMigration.getAllVersions(cb)
         )
       )
     else
-      migrator.rollback(adapter, migrator, schemaMigration, migrationsPath, steps, (err)->
+      migrator.rollback(adapter, migrationsPath, steps, (err)->
         return cb(err) if err
         schemaMigration.getAllVersions(cb)
       )
