@@ -15,9 +15,6 @@ SchemaMigration = Waterline.Collection.extend({
   autoCreatedAt: false
   autoUpdatedAt: false
   autoPK: false
-  definition: attributes
-  schema: attributes
-  _schema: attributes
 }, {
   attributes: attributes
 
