@@ -5,180 +5,53 @@
 [![Code Climate](https://codeclimate.com/github/BlueHotDog/sails-migrations.png)](https://codeclimate.com/github/BlueHotDog/sails-migrations)
 [![Build Status](https://travis-ci.org/BlueHotDog/sails-migrations.png?branch=master)](https://travis-ci.org/BlueHotDog/sails-migrations)
 
-sails-migrations provides an easy way to manage database migrations, much like Rails does.
+sails-migrations provides an easy way to manage database migrations with sails, based on the amazing https://github.com/tgriesser/knex lib.
 This means you can have fine-grained control over your schema/data transformations between versions.
 
 ## Supported sails versions:
 
-sails-migrations supports sails versions 0.9X and 0.10-RC8, for both MySQL & 
-PostgreSQL.
+sails-migrations supports sails versions 0.9X up to 0.10.5, for both MySQL & PostgreSQL.
 
 Please let us know if you encounter any problem working with sails-migrations by 
 opening an issue.
 
+As of version 2.0 we've moved to using knex schema builder.
+
+**NOTE**
+
+- sails-migrations up until (including) 0.1 supported Sails versions 0.9 & 0.10RC8
+
+- When upgrading to 2.0, notice that you'll need to change your old migrations code to work with knex instead of waterline.
+
 ## Installing:
 
-sails-migrations' dependencies are Sails and mysql/postgres adapters,
-To install run:
+First run
+
+```bash
+npm install -g sails-migrations
+```
+
+this will install the global CLI sails-migrations.
+
+Next you'll need to install sails-migrations within the project you would like to work on:
 
 ```bash
 npm install --save sails-migrations
 ```
 
-and add the following line to your Gruntfile.js
+## Example apps
 
-```javascript
-grunt.loadNpmTasks('sails-migrations');
-```
-## Example app
+You can checkout some [example Sails apps](https://github.com/BlueHotDog/sails-migrations/tree/master/samples).
 
-You can checkout an [example Sails](https://github.com/itayadler/sails-migrations-testapp).
+## Commands
 
+For a list of commands, simply run sails-migrations from your command prompt.
 
-## Initializing your database
-
-Before running any migrations, you need to verify your database exists, you can do that by running:
-
-```bash
-grunt db:create
-```
-
-This should create an empty database with the _sails\_schema\_migrations_  table - which is used to track what migrations were run against this db.
 
 ## Working with migrations
 
+For a more detailed documentation, please refer to http://knexjs.org/
 A migration constitutes of two parts:
 
 - `up`: determines what should be performed when you want to forward your database to this version.
 - `down`: should be the exact reverse of the up method, so, for example, if on the up phase you created a table, the down phase should delete that table.
-
-Each phase (`up`/`down`) will receive two `parameters`:
-
-1. `adapter` - A thin wrapper around Sails adapter to provide better, more functional way, of working with migrations, see [Adapter](#adapter_api) for more info.
-2. `done` - callback
-
-## Creating a migration:
-
-To create a new migration, simply run:
-```bash
-grunt migration:generate --name="my migration name"
-```
-This should create a new file within the **db/migrations** folder called [YYYYMMDDHHMMSS]\_my\_migration\_name.js
-
-sails-migrations uses the timestamp to determine both the order of the migrations and which migrations were run.
-
-## Example of a basic migration file
-
-```javascript
-/*
-* Sails migration
-* Created at 25/01/1985
-* */
-
-exports.up = function(adapter, done) {
-	adapter.define('tableName', {name: {type: 'STRING'}}, done);
-};
-
-exports.down = function(adapter, done) {
-	adapter.drop('tableName', done);
-};
-
-```
-
-## Example of a migration using promises(BlueBird)
-
-```javascript
-/*
-* Sails migration
-* Created at 25/01/1985
-* */
-
-var Promise = require('bluebird')
-exports.up = function(adapter) {
-    var defineWithPromise = Promise.promisify(adapter.define);
-    defineWithPromise('tableName', {name: {type: 'STRING'}});
-};
-
-exports.down = function(adapter, done) {
-	adapter.drop('tableName', done);
-};
-
-```
-## Migration CLI
-
-- ```grunt db:migrate```: By default, runs migrations up to the latest migration available
-  - _[--version=]_ - _optional_ - up to which version to run the migrations(inclusive)
-- ```grunt db:rollback```: By default, runs the down step of the latest migration executed
-  - _[--steps=1]_ - _optional_ How many rollbacks to perform, default is 1
-- ```grunt db:drop```: Drops the database
-- ```grunt db:create```: Creates an empty database(with the [sails_schema_migrations](#sails_schema_migrations) table)
-- ```grunt db:reset```: Drops & Creates the database
-- ```grunt db:status```: Prints out the status of each migration in the migration folder
-
-## <a id="adapter_api"></a>Adapter API
-
--  **define**: (tableName, definition, cb) - Defines a new table
-	- **tableName** - Table name to create
-	- **definition** - Same as the attributes given to sails model
-	- **cb** - called with err,schema
-	- **example** -
-
-		```javascript
-			definition = {
-				first_name: {type: 'STRING'},
-				last_name: {type: 'STRING'},
-				id: {
-					type: 'INTEGER',
-					autoIncrement: true,
-					defaultsTo: 'AUTO_INCREMENT',
-					primaryKey: true
-				}
-			}
-			adapter.define('myTable', definition, function (err, schema) {
-				//do something
-			})
-		```
-- **drop**: (tableName, cb) - Drops a table
-	- **tableName** - Table name of the table to drop
-	- **cb** - called with err,schema
-	- **example** -
-
-	```javascript
-		adapter.drop('myTable', done)
-	```
-- **addAttribute**: (tableName, attrName, attrDef, cb) - adds a column to an existing table
-	- **tableName** - Table name to which to add the column
-	- **attrName** - Name of the attribute to add
-	- **attrDef** - Same as in waterline model
-	- **example** -
-
-	```javascript
-		adapter.addAttribute('myTable', 'phoneNumber', {type:'INTEGER'}, done);
-	```
-- **removeAttribute**: (tableName, attrName, cb) - removes a column from an existing table
-	-  **tableName** - Table name from which to remove the attribute
-	-  **attrName** - Attribute to remove
-	- **cb** - called with err if any
-	- **example** -
-
-	```javascript
-		adapter.removeAttribute('myTable', 'phoneNumber', done);
-	```
-- **query**: (query, data, cb)
-	-	**query** - a String query to execute directly against the DB
-	-	**data** - used to incorpurate values into the query
-	-	**cb**
-- **describe**: (tableName, cb) - returns a definition of a table, i.e its schema
-	- **tableName** - the table name to describe
-	- **cb** called with err,attributes, when schema is a hash of the following format:
-
-	```javascript
-		{
-			id: {
-					type: 'INTEGER',
-					autoIncrement: true,
-					defaultsTo: 'AUTO_INCREMENT',
-					primaryKey: true
-				}
-		}
-	```

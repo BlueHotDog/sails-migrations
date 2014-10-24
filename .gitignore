@@ -7,11 +7,14 @@ lib-cov
 *.pid
 *.gz
 
+.idea
+
 pids
 logs
 results
 npm-debug.log
-node_modules
+node_modules/**/*
 samples/example_app0.9.16/db/**/*
 samples/example_app0.9.8/db/**/*
 samples/example_app0.10-rc8/db/**/*
+samples/example_app0.10.5/db/**/*

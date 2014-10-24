@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - "0.11"
+  - "0.10"
+  - "0.8"
+services: postgresql
+env:
+  - DB_USER=postgres DB_PASS=''
+before_script:
+  - psql -c 'create database sailspg;' -U postgres
+notifications:
+  email:
+    - particlebanana@gmail.com

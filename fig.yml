@@ -1,0 +1,23 @@
+dbpostgres:
+  image: postgres:latest
+  ports:
+    - "5432"
+
+dbmysql:
+  image: tutum/mysql:latest
+  ports:
+    - "3306"
+
+web:
+  build: .
+  command:
+    - npm install
+#  volumes:
+#    - .:/app
+#  working_dir: /app
+  environment:
+    - USERNAME=postgres
+    - PASSWORD=
+  links:
+    - dbpostgres
+    - dbmysql

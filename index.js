@@ -1,2 +1,1 @@
-require('coffee-script/register');
-require('./lib/sails-migrations.coffee');
+module.exports = require('./lib/sails-migrations.js');
