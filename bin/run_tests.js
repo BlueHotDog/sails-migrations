@@ -26,5 +26,9 @@ function puts(error, stdout, stderr) {
 var directories = getDirectories(path.resolve(PROJECTS_ROOT));
 
 _.forEach(directories, function(version) {
-  shell.exec('SAILS_VERSION='+version+' mocha test/specs');
+  shell.exec('SAILS_VERSION='+version+' mocha test/specs', function(code, output) {
+    if (code!==0) {
+      throw "Error running test for version " + version + " " + output;
+    }
+  });
 });
