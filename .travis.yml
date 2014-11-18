@@ -14,17 +14,28 @@ before_script:
   - npm link .
 
   - cp test/fixtures/sample_apps/0.9.8/config/adapters.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.9.8 && npm install && cd ../../../../
+  - cd test/fixtures/sample_apps/0.9.8
+  - npm link sails-migrations
+  - npm install && cd ../../../../
 
   - cp test/fixtures/sample_apps/0.9.16/config/adapters.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.9.16 && npm install && cd ../../../../
+  - cd test/fixtures/sample_apps/0.9.16
+  - npm link sails-migrations
+  - npm install && cd ../../../../
+
 
   - cp test/fixtures/sample_apps/0.10-rc8/config/connections.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.10-rc8 && npm install && cd ../../../../
+  - cd test/fixtures/sample_apps/0.10-rc8
+  - npm link sails-migrations
+  - npm install && cd ../../../../
 
   - cp test/fixtures/sample_apps/0.10-rc8/config/models.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.10-rc8 && npm install && cd ../../../../
+  - cd test/fixtures/sample_apps/0.10-rc8
+  - npm link sails-migrations
+  - npm install && cd ../../../../
 
   - cp test/fixtures/sample_apps/0.10.5/config/connections.{travis.temp,js}
   - cp test/fixtures/sample_apps/0.10.5/config/models.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.10.5 && npm install && cd ../../../../
+  - cd test/fixtures/sample_apps/0.10.5
+  - npm link sails-migrations
+  - npm install && cd ../../../../
