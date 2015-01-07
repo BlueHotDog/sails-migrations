@@ -37,7 +37,7 @@ function exitSuccessfully(text) {
 function initSailsMigrations(env) {
   if (!env.modulePath) {
     console.log(chalk.red('No local sails_migrations install found in:'), chalk.magenta(tildify(env.cwd)));
-    exit('Try running: `npm install sails-migrations`');
+    exitWithError('Try running: `npm install sails-migrations`');
   }
 
   if (process.cwd() !== env.cwd) {
