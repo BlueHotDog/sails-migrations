@@ -111,7 +111,7 @@ var invoke = function (env) {
       pending = initSailsMigrations(env)
         .createDatabase()
         .then(function (result) {
-          exitSuccessfully(chalk.green('successfully created database: ' + chalk.blue(result.database) + ' on host: ' + chalk.blue(result.host)));
+          exitSuccessfully(chalk.green('successfully created database: ' + chalk.blue(result.connection.database) + ' on host: ' + chalk.blue(result.connection.host)));
         }).catch(exitWithError);
     });
 
@@ -122,7 +122,7 @@ var invoke = function (env) {
       pending = initSailsMigrations(env)
         .dropDatabase()
         .then(function (result) {
-          exitSuccessfully(chalk.green('successfully dropped database: ' + chalk.blue(result.database) + ' on host: ' + chalk.blue(result.host)))
+          exitSuccessfully(chalk.green('successfully dropped database: ' + chalk.blue(result.connection.database) + ' on host: ' + chalk.blue(result.connection.host)))
         }).catch(exitWithError);
     });
 
