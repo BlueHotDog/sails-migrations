@@ -15,6 +15,7 @@ var _ = require('lodash');
 
 var cli = new Liftoff({
   name: 'sails-migrations',
+  file: 'migrationsFile',
   extensions: require('interpret').jsVariants
 });
 

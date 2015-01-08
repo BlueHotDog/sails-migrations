@@ -1,6 +1,6 @@
 {
   "name": "sails-migrations",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "The missing, migrations, arm of the octopus",
   "main": "index.js",
   "scripts": {
@@ -36,6 +36,7 @@
     }
   ],
   "files": [
+    "index.js",
     "lib",
     "bin",
     "tasks",
@@ -54,10 +55,10 @@
     "bluebird": "1.1.1",
     "chalk": "0.5.1",
     "cli-table": "0.3.1",
-    "commander": "2.5.0",
+    "commander": "2.6.0",
     "interpret": "0.3.7",
     "knex": "0.7.3",
-    "liftoff": "0.13.5",
+    "liftoff": "1.0.4",
     "lodash": "2.4",
     "optimist": "0.6.1",
     "tildify": "1.0.0"
