@@ -10,24 +10,19 @@ env:
   - SAILS_ADAPTER_NAME=postgresql
   - SAILS_ADAPTER_NAME=mysql
 
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y parallel
+
 before_script:
   - sh -c "if [ '$SAILS_ADAPTER_NAME' = 'postgresql' ]; then psql -c 'create database travis_ci_test;' -U postgres; fi"
   - sh -c "if [ '$SAILS_ADAPTER_NAME' = 'mysql' ]; then mysql -e 'create database travis_ci_test;'; fi"
 
   - npm link .
 
-  - cp test/fixtures/sample_apps/0.9.8/config/adapters.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.9.8 && npm install && cd ../../../../
+  - cd test/fixtures/sample_apps/
 
-  - cp test/fixtures/sample_apps/0.9.16/config/adapters.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.9.16 && npm install && cd ../../../../
+  - parallel 'cd {} && cp config/adapters.{travis.temp,js} && npm install' ::: 0.9.*
+  - parallel 'cd {} && cp config/connections.{travis.temp,js} cp config/models.{travis.temp,js} && npm install' ::: 0.10*
 
-  - cp test/fixtures/sample_apps/0.10-rc8/config/connections.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.10-rc8 && npm install && cd ../../../../
-
-  - cp test/fixtures/sample_apps/0.10-rc8/config/models.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.10-rc8 && npm install && cd ../../../../
-
-  - cp test/fixtures/sample_apps/0.10.5/config/connections.{travis.temp,js}
-  - cp test/fixtures/sample_apps/0.10.5/config/models.{travis.temp,js}
-  - cd test/fixtures/sample_apps/0.10.5 && npm install && cd ../../../../
+  - cd ../../../

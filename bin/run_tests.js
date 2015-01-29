@@ -25,6 +25,11 @@ function puts(error, stdout, stderr) {
 
 var directories = getDirectories(path.resolve(PROJECTS_ROOT));
 
+var exitCode = 0;
+
 _.forEach(directories, function(version) {
-  shell.exec('SAILS_VERSION='+version+' mocha test/specs');
+    var testExitCode = shell.exec('SAILS_VERSION='+version+' mocha test/specs').code;
+    if (testExitCode !== 0) exitCode = testExitCode;
 });
+
+shell.exit(exitCode);
