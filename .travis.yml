@@ -22,7 +22,10 @@ before_script:
 
   - cd test/fixtures/sample_apps/
 
-  - "parallel 'cd {} && cp config/adapters.{travis.temp,js} && npm install' ::: 0.9.*"
-  - "parallel 'cd {} && cp config/connections.{travis.temp,js} cp config/models.{travis.temp,js} && npm install' ::: 0.10*"
+  - >
+    sh -c "parallel 'cd {} && cp config/adapters.{travis.temp,js} && npm install' ::: 0.9.*"
+
+  - >
+    sh -c "parallel 'cd {} && cp config/connections.{travis.temp,js} cp config/models.{travis.temp,js} && npm install' ::: 0.10*"
 
   - cd ../../../
