@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/BlueHotDog/sails-migrations.png?label=ready&title=Ready)](https://waffle.io/BlueHotDog/sails-migrations)
 # sails-migrations
 
 [![NPM version](https://badge.fury.io/js/sails-migrations.png)](http://badge.fury.io/js/sails-migrations)
