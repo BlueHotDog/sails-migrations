@@ -23,6 +23,10 @@ As of version 2.0 we've moved to using knex schema builder.
 
 - When upgrading to 2.0, notice that you'll need to change your old migrations code to work with knex instead of waterline.
 
+## What db migrations are and how/when to use them:
+
+DB migrations allows you to change your database schema/data in a controlled way by making small atomic/ordered data to your DB, for a better answer, read [this](https://github.com/phusion/passenger-docker)
+
 ## Installing:
 
 First run
@@ -38,6 +42,15 @@ Next you'll need to install sails-migrations within the project you would like t
 ```bash
 npm install --save sails-migrations
 ```
+## Usage
+
+Fairly simple, there are a few basic commands
+- `db:drop` - Just as the name suggests, reads your sails config, and *DROPS* the db. use with care.
+- `db:create` - Same but different, creates the db you specified in your sails config.
+- `generate <name>` - Generate a new blank migrations file, after you run this command, you need to open the new file, which by default is saved to `\db\migrations\`, after you run this command, you should open this file, and put your migration information. for the migration syntex, please refer to the [Knex](https://github.com/tgriesser/knex) documentation
+- `migrate` - Runs all the not-yet-runned migrations from the last run of migrate, all of those migrations are saved as a `batch`.
+- `rollback` - Runs the revert function on each migration in the last `batch`.
+- `status` - Prints a nice table of all the committed/uncommitted migrations.
 
 ## Example apps
 
