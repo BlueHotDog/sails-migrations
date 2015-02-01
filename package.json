@@ -1,6 +1,6 @@
 {
   "name": "sails-migrations",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "The missing, migrations, arm of the octopus",
   "main": "index.js",
   "scripts": {
