@@ -12,7 +12,7 @@ This means you can have fine-grained control over your schema/data transformatio
 
 sails-migrations supports sails versions 0.9X up to 0.10.5, for both MySQL & PostgreSQL.
 
-Please let us know if you encounter any problem working with sails-migrations by 
+Please let us know if you encounter any problem working with sails-migrations by
 opening an issue.
 
 As of version 2.0 we've moved to using knex schema builder.
@@ -54,7 +54,7 @@ Fairly simple, there are a few basic commands
 
 ## Example apps
 
-You can checkout some [example Sails apps](https://github.com/BlueHotDog/sails-migrations/tree/master/samples).
+You can checkout some [example Sails apps](https://github.com/BlueHotDog/sails-migrations/tree/master/test/fixtures/sample_apps).
 
 ## Commands
 
