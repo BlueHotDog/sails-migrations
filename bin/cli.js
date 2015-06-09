@@ -58,7 +58,8 @@ var invoke = function (env) {
       chalk.blue('Local sails_migrations version: ', chalk.green(env.modulePackage.version)) + '\n'
   )
     .option('--cwd [path]', 'Specify the working directory.')
-    .option('--env [name]', 'environment, default: process.env.NODE_ENV || development');
+    .option('--env [name]', 'environment, default: process.env.NODE_ENV || development')
+    .option('--connection [name]', 'connection name, default: default connection');
 
 
   commander
