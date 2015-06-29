@@ -64,9 +64,6 @@
     "semver": "^4.3.6",
     "tildify": "1.0.0"
   },
-  "peerDependencies": {
-    "sails": ">= 0.9 < 1"
-  },
   "devDependencies": {
     "chai": "~1.8",
     "coffee-script": "^1.8.0",
