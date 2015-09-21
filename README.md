@@ -1,3 +1,8 @@
+# THIS PROJECT IS LOOKING FOR A MAINTAINER
+
+unfortunatly i do not have the time to support this project.
+so, please help :)
+
 # sails-migrations
 
 [![NPM version](https://badge.fury.io/js/sails-migrations.png)](http://badge.fury.io/js/sails-migrations)
