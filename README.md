@@ -50,6 +50,7 @@ npm install --save sails-migrations
 ## Usage
 
 Fairly simple, there are a few basic commands
+- `--connection <name>` - Migration of certain compounds from the configuration
 - `db:drop` - Just as the name suggests, reads your sails config, and *DROPS* the db. use with care.
 - `db:create` - Same but different, creates the db you specified in your sails config.
 - `generate <name>` - Generate a new blank migrations file, after you run this command, you need to open the new file, which by default is saved to `\db\migrations\`, after you run this command, you should open this file, and put your migration information. for the migration syntex, please refer to the [Knex](https://github.com/tgriesser/knex) documentation
