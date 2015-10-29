@@ -10,7 +10,7 @@ This means you can have fine-grained control over your schema/data transformatio
 
 ## Supported sails versions:
 
-sails-migrations supports sails versions 0.9X up to 0.10.5, for both MySQL & PostgreSQL.
+sails-migrations supports sails versions 0.9X up to 0.11.2, for both MySQL & PostgreSQL.
 
 Please let us know if you encounter any problem working with sails-migrations by 
 opening an issue.
