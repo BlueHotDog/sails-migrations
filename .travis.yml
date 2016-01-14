@@ -4,7 +4,10 @@ addons:
   postgresql: "9.3"
 
 node_js:
-  - "0.10.28"
+  - "0.10"
+  - "0.12"
+  - "4"
+  - "5"
 
 env:
   - SAILS_ADAPTER_NAME=postgresql
