@@ -1,6 +1,6 @@
 {
   "name": "sails-migrations",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "The missing, migrations, arm of the octopus",
   "main": "index.js",
   "scripts": {
@@ -57,7 +57,7 @@
     "cli-table": "0.3.1",
     "commander": "2.6.0",
     "interpret": "0.3.7",
-    "knex": "0.7.4",
+    "knex": "0.9.0",
     "liftoff": "1.0.4",
     "lodash": "2.4",
     "optimist": "0.6.1",
