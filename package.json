@@ -61,7 +61,6 @@
     "liftoff": "1.0.4",
     "lodash": "2.4",
     "optimist": "0.6.1",
-    "semver": "^4.3.6",
     "tildify": "1.0.0"
   },
   "peerDependencies": {
