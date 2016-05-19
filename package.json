@@ -58,7 +58,7 @@
     "commander": "2.6.0",
     "interpret": "0.3.7",
     "knex": "0.9.0",
-    "liftoff": "1.0.4",
+    "liftoff": "^2.2.1",
     "lodash": "2.4",
     "optimist": "0.6.1",
     "tildify": "1.0.0"
