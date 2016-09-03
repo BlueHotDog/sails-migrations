@@ -1,6 +1,6 @@
 {
   "name": "sails-migrations",
-  "version": "2.0.6",
+  "version": "2.0.9",
   "description": "The missing, migrations, arm of the octopus",
   "main": "index.js",
   "scripts": {
@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/BlueHotDog/sails-migrations",
   "optionalDependencies": {
-    "pg": "4.1.1",
+    "pg": "4.5.5",
     "mysql": "2.5.4"
   },
   "dependencies": {
@@ -57,8 +57,8 @@
     "cli-table": "0.3.1",
     "commander": "2.6.0",
     "interpret": "0.3.7",
-    "knex": "0.7.4",
-    "liftoff": "1.0.4",
+    "knex": "^0.11.3",
+    "liftoff": "^2.2.1",
     "lodash": "2.4",
     "optimist": "0.6.1",
     "tildify": "1.0.0"

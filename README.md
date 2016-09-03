@@ -1,3 +1,8 @@
+# THIS PROJECT IS LOOKING FOR A MAINTAINER
+
+unfortunatly i do not have the time to support this project.
+so, please help :)
+
 # sails-migrations
 
 [![NPM version](https://badge.fury.io/js/sails-migrations.png)](http://badge.fury.io/js/sails-migrations)
@@ -10,7 +15,7 @@ This means you can have fine-grained control over your schema/data transformatio
 
 ## Supported sails versions:
 
-sails-migrations supports sails versions 0.9X up to 0.10.5, for both MySQL & PostgreSQL.
+sails-migrations supports sails versions 0.9X up to 0.11.2, for both MySQL & PostgreSQL.
 
 Please let us know if you encounter any problem working with sails-migrations by
 opening an issue.
