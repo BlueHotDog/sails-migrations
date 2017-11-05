@@ -1,5 +1,7 @@
 # THIS PROJECT IS LOOKING FOR A MAINTAINER
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/BlueHotDog/sails-migrations.svg)](https://greenkeeper.io/)
+
 unfortunatly i do not have the time to support this project.
 so, please help :)
 
