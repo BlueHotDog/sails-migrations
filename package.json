@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/BlueHotDog/sails-migrations",
   "optionalDependencies": {
-    "pg": "4.5.5",
+    "pg": "7.4.1",
     "mysql": "2.5.4"
   },
   "dependencies": {
